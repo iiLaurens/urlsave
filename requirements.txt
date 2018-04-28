@@ -1,0 +1,4 @@
+lxml==4.2.1
+selenium==3.11.0
+beautifulsoup4==4.6.0
+poyo==0.4.1
