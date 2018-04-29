@@ -6,18 +6,11 @@ This is a test script file.
 """
 
 from poyo import parse_string
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
 from lxml import html
-import re
-
-
-#webdriver.Chrome(chrome_options=chrome_options, 
-#                                       executable_path=chrome_driver)
-
+from time import sleep
 
 class Parser(object):
-    def __init__(self, job, driver=None, html=None):
+    def __init__(self, job, driver=None, html=None, keep_driver = False):
         # If we have raw string, then transform it into a dictionary
         if type(job) == str:
             job = parse_string(job)
@@ -26,16 +19,13 @@ class Parser(object):
         self.job = job
         self.driver = driver
         self.html = html
+        self.keep_driver = keep_driver
         
         if not driver and not html:
             raise Exception("No HTML provided and no webdriver found")
         elif driver and not self.job.get('Url'):
             raise Exception("No URL given in job config")
         
-    def stop(self):
-        # Neatly close the driver, if any
-        if driver:
-            self.driver.quit()
         
     def start(self):
         # Parse the URL. Either use a real webdriver (if available) to fetch
@@ -47,8 +37,30 @@ class Parser(object):
         self.page = html.fromstring(self.html)
         self.active_element = self.page
         
+        if self.driver and self.job.get('Navigate'):
+            self.navigate(self.job['Navigate'])
+        
         # Parse list
-        self.storage = self.save(self.job['Save'])
+        if self.job.get("Save"):
+            self.storage = self.save(self.job['Save'])
+        
+        if self.driver and not self.keep_driver:
+            self.driver.quit()
+    
+    def navigate(self, jobs):
+        jobs = jobs.copy() # Prevent changes to original job by making copy
+        
+        if type(jobs) != list:
+            jobs = [jobs]
+        
+        for job in jobs:
+            if job["Action"] == "Click":
+                self.driver.implicitly_wait(job.get("Timeout", 1))
+                try:
+                    self.driver.find_element_by_xpath(job["Element"]).click()
+                except:
+                    if not job.get("Optional", False):
+                        raise
         
     def xpath(self, path):
         # Test validity of XPath
@@ -95,42 +107,68 @@ class Parser(object):
             
         elif type(job) == dict:
             job = job.copy() # Prevent changes to original job by making copy
-            
+            original_job = job.copy()
+
             results = []
             keys = []
             
-            # Limit scope of XPath to certain elements if scope is given
-            # or else fall back to current active element
-            group_by = job.pop("Group by", ".")
-            elements = self.xpath(group_by)
-            for e in elements:
-                self.active_element = e
-                result = {}
-                                   
-                if "Save" in job.keys():
-                    job = {key:job.get(key) for key in ["Keys", "Save"] if job.get(key)}
+            active_page = True
+            page_counter = 1
+            max_pages = 5
+            job.pop("Next page", None)
+            
+            
+            while active_page:
+                print("go")
+                # Limit scope of XPath to certain elements if scope is given
+                # or else fall back to current active element
+                group_by = job.pop("Group by", ".")
+                elements = self.xpath(group_by)
+                for e in elements:
+                    self.active_element = e
+                    
+                    result = {}
+                                       
+                    if "Save" in job.keys():
+                        job = {key:job.get(key) for key in ["Keys", "Save"] if job.get(key)}
+    
+                    for key, value in job.items():
+                        result[key] = self.save(value)
+                        
+                    if "Keys" in job.keys():
+                        if group_by != ".":
+                            if type(result["Keys"])!=str:
+                                raise Exception("Keys XPath must return exactly one value per group")
+                            keys.append(result.pop("Keys"))
+                        else:
+                            if not job.get("Save"):
+                                raise Exception("'Keys' command requires 'Save' or 'Group by' command to match with")
+                            elif type(result["Keys"]) == list and len(result["Keys"]) != len(result["Save"]):
+                                raise Exception(f"Set returned by Save: {job['Save']} not same length as Keys: {job['Keys']}")
+                            keys = result["Keys"]
+                            results = result["Save"]
+                            break
+                                
+                    if "Save" in job.keys():
+                        result = result["Save"]
+                        
+                    results.append(result)
 
-                for key, value in job.items():
-                    result[key] = self.save(value)
-                    
-                if "Keys" in job.keys():
-                    if group_by != ".":
-                        if type(result["Keys"])!=str:
-                            raise Exception("Keys XPath must return exactly one value per group")
-                        keys.append(result.pop("Keys"))
-                    else:
-                        if not job.get("Save"):
-                            raise Exception("'Keys' command requires 'Save' or 'Group by' command to match with")
-                        elif type(result["Keys"]) == list and len(result["Keys"]) != len(result["Save"]):
-                            raise Exception(f"Set returned by Save: {job['Save']} not same length as Keys: {job['Keys']}")
-                        keys = result["Keys"]
-                        results = result["Save"]
-                        break
-                            
-                if "Save" in job.keys():
-                    result = result["Save"]
-                    
-                results.append(result)        
+                active_page = False
+                page_counter = page_counter + 1
+                if "Next page" in original_job.keys() and page_counter < max_pages:
+                    job = original_job.copy()
+                    self.driver.implicitly_wait(0)
+                    print(job["Next page"])
+                    e = self.driver.find_element_by_xpath(job["Next page"])
+                    self.driver.execute_script("return arguments[0].scrollIntoView();", e)
+                    sleep(0.5)
+                    e.click()
+                    sleep(0.5)
+                    self.html = self.driver.page_source
+                    self.page = html.fromstring(self.html)
+                    self.active_element = self.page
+                    active_page = True
 
             if len(keys) > 0:
                 results = dict(zip(keys, results))
