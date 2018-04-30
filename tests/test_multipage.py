@@ -20,7 +20,7 @@ def test_tweakers():
     
     driver = webdriver.Chrome(chrome_options=chrome_options, 
                               executable_path=chrome_driver)
-        
+    
     ##################
     # First test job #
     ##################
@@ -35,10 +35,32 @@ def test_tweakers():
             Group by: //div[@id="listingContainer"]//tr
             Title: //p[contains(@class, "title")]
             Replies: //td[@class="replies"]//a
-            Next page: //a[@class="next"]
      """).strip()
     
-    test_obj = Parser(job, driver=driver)
+    test_obj = Parser(job, driver=driver, keep_driver=True)
+    test_obj.start()
+    assert len(test_obj.storage) == 25
+        
+    ##################
+    # Second test job #
+    ##################
+    job = dedent("""
+        Url: https://tweakers.net/nieuws/zoeken/
+        Navigate:
+            Action: Click
+            Element: //*[@id="cookieAcceptForm"]//button
+            Optional: True
+            Timeout: 3
+        Multipage:
+            Next: //a[@class="next"]
+            Max pages: 3
+            Save:
+                Group by: //div[@id="listingContainer"]//tr
+                Title: //p[contains(@class, "title")]
+                Replies: //td[@class="replies"]//a
+     """).strip()
+    
+    test_obj = Parser(job, driver=driver, keep_driver=True)
     test_obj.start()
     assert len(test_obj.storage) == 75
     

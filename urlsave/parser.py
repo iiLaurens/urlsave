@@ -41,8 +41,11 @@ class Parser(object):
             self.navigate(self.job['Navigate'])
         
         # Parse list
-        if self.job.get("Save"):
+        if self.job.get("Multipage"):
+            self.storage = self.multipage(self.job['Multipage'])
+        elif self.job.get("Save"):
             self.storage = self.save(self.job['Save'])
+            
         
         if self.driver and not self.keep_driver:
             self.driver.quit()
@@ -62,6 +65,11 @@ class Parser(object):
                     if not job.get("Optional", False):
                         raise
         
+        sleep(0.5)
+        self.html = self.driver.page_source
+        self.page = html.fromstring(self.html)
+        self.active_element = self.page
+        
     def xpath(self, path):
         # Test validity of XPath
         path = path.strip()
@@ -74,101 +82,137 @@ class Parser(object):
             path = path[:slash_pos] + "." + path[slash_pos:]
         
         return self.active_element.xpath(path)
+    
+    def multipage(self, job):
+        max_pages = job.get("Max pages", 10)
+        next_path = job.get("Next")
+        
+        if not next_path or not job.get("Save"):
+            raise Exception("Multipage requires an XPath and Save")
+        
+        # Detect if the save in the multipage is grouped
+        if type(job["Save"]) == dict and job["Save"].get("Group by"):
+            is_grouped = True
+        else: is_grouped = False
+        
+        results = []
+        
+        for page in range(max_pages):
+            results.append(self.save(job["Save"]))
+            
+            if page < max_pages:
+                self.driver.implicitly_wait(0)
+                e = self.driver.find_element_by_xpath(job["Next"])
+                self.driver.execute_script("return arguments[0].scrollIntoView();", e)
+                
+                # Give the browser some time to do it's thing
+                sleep(0.5)
+                e.click()
+                sleep(0.5)
+                
+                self.html = self.driver.page_source
+                self.page = html.fromstring(self.html)
+                self.active_element = self.page
+        
+        if is_grouped:
+            if type(results[0]) == dict:
+                result = {}
+                for i in results:
+                    for k, v in i.items():
+                        result[k] = v
+            if type(results[0]) == list:
+                result = []
+                for i in results:
+                    for v in i:
+                        result.append(v)    
+        else:
+            if type(results[0]) == dict:
+                result = {}
+                for i in results:
+                    for k in i.keys():
+                        result[k] = result.get(k, []) + (i[k] if type(i[k]) == list else [i[k]])
+            if type(results[0]) == list:
+                raise Exception("This case is not programmed yet")
+        
+        return result
+              
+            
+
+    def save_xpath(self, job):
+        # Seperate options from XPath string
+        options = set(["-"+e for e in job.split(" -")[1:]])
+        job = job.split(" -")[0]
+        
+        # Get results
+        result = self.xpath(job)
+        
+        # Note that if the xpath delivers an element, the expression below
+        # will extract all text contents and strip leading or trailing
+        # whitespace. If not an element but already text, for example
+        # because the xpath selects some attribute value such as class, 
+        # then only stripping is required.
+        result = [e.text_content().strip() if type(e) == html.HtmlElement
+                  else e.strip() for e in result]
+        
+        # Keep only unique values if the unique option is set
+        if len(set(["--unique", "-u"]) & options) > 0:
+            seen = set()
+            result = [x for x in result if not (x in seen or seen.add(x))]
+        
+        # If the result is a single value and not a list, then collapse
+        # the list, unless this behaviour is turned off in the options
+        if len(set(["--force-list", "-l"]) & options) == 0:
+            result = result if len(result) != 1 else result[0]
+            
+        return result
+        
         
     def save(self, job):
         if type(job) == str:
-            # Seperate options from XPath string
-            options = set(["-"+e for e in job.split(" -")[1:]])
-            job = job.split(" -")[0]
-            
-            # Get results
-            result = self.xpath(job)
-            
-            # Note that if the xpath delivers an element, the expression below
-            # will extract all text contents and strip leading or trailing
-            # whitespace. If not an element but already text, for example
-            # because the xpath selects some attribute value such as class, 
-            # then only stripping is required.
-            result = [e.text_content().strip() if type(e) == html.HtmlElement
-                      else e.strip() for e in result]
-            
-            # Keep only unique values if the unique option is set
-            if len(set(["--unique", "-u"]) & options) > 0:
-                seen = set()
-                result = [x for x in result if not (x in seen or seen.add(x))]
-            
-            # If the result is a single value and not a list, then collapse
-            # the list, unless this behaviour is turned off in the options
-            if len(set(["--force-list", "-l"]) & options) == 0:
-                result = result if len(result) != 1 else result[0]
-                
-                
-            return result
-            
-        elif type(job) == dict:
+            return self.save_xpath(job)
+        
+        if type(job) == dict:
             job = job.copy() # Prevent changes to original job by making copy
             original_job = job.copy()
 
             results = []
             keys = []
             
-            active_page = True
-            page_counter = 1
-            max_pages = 5
-            job.pop("Next page", None)
-            
-            
-            while active_page:
-                print("go")
-                # Limit scope of XPath to certain elements if scope is given
-                # or else fall back to current active element
-                group_by = job.pop("Group by", ".")
-                elements = self.xpath(group_by)
-                for e in elements:
-                    self.active_element = e
-                    
-                    result = {}
-                                       
-                    if "Save" in job.keys():
-                        job = {key:job.get(key) for key in ["Keys", "Save"] if job.get(key)}
-    
-                    for key, value in job.items():
-                        result[key] = self.save(value)
-                        
-                    if "Keys" in job.keys():
-                        if group_by != ".":
-                            if type(result["Keys"])!=str:
-                                raise Exception("Keys XPath must return exactly one value per group")
-                            keys.append(result.pop("Keys"))
-                        else:
-                            if not job.get("Save"):
-                                raise Exception("'Keys' command requires 'Save' or 'Group by' command to match with")
-                            elif type(result["Keys"]) == list and len(result["Keys"]) != len(result["Save"]):
-                                raise Exception(f"Set returned by Save: {job['Save']} not same length as Keys: {job['Keys']}")
-                            keys = result["Keys"]
-                            results = result["Save"]
-                            break
-                                
-                    if "Save" in job.keys():
-                        result = result["Save"]
-                        
-                    results.append(result)
+            # Limit scope of XPath to certain elements if scope is given
+            # or else fall back to current active element
+            group_by = job.pop("Group by", ".")
+            elements = self.xpath(group_by)
+            for e in elements:
+                self.active_element = e
+                
+                result = {}
+                                   
+                if "Save" in job.keys():
+                    job = {key:job.get(key) for key in ["Keys", "Save"] if job.get(key)}
 
-                active_page = False
-                page_counter = page_counter + 1
-                if "Next page" in original_job.keys() and page_counter < max_pages:
-                    job = original_job.copy()
-                    self.driver.implicitly_wait(0)
-                    print(job["Next page"])
-                    e = self.driver.find_element_by_xpath(job["Next page"])
-                    self.driver.execute_script("return arguments[0].scrollIntoView();", e)
-                    sleep(0.5)
-                    e.click()
-                    sleep(0.5)
-                    self.html = self.driver.page_source
-                    self.page = html.fromstring(self.html)
-                    self.active_element = self.page
-                    active_page = True
+                for key, value in job.items():
+                    result[key] = self.save(value)
+                    
+                if "Keys" in job.keys():
+                    if group_by != ".":
+                        if type(result["Keys"])!=str:
+                            raise Exception("Keys XPath must return exactly one value per group")
+                        keys.append(result.pop("Keys"))
+                    else:
+                        if not job.get("Save"):
+                            raise Exception("'Keys' command requires 'Save' or 'Group by' command to match with")
+                        elif type(result["Keys"]) == list and len(result["Keys"]) != len(result["Save"]):
+                            raise Exception(f"Set returned by Save: {job['Save']} not same length as Keys: {job['Keys']}")
+                        keys = result["Keys"]
+                        results = result["Save"]
+                        break
+                            
+                if "Save" in job.keys():
+                    result = result["Save"]
+                    
+                
+                    
+                results.append(result)
 
             if len(keys) > 0:
                 results = dict(zip(keys, results))
