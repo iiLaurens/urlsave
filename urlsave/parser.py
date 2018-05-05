@@ -8,6 +8,7 @@ This is a test script file.
 from poyo import parse_string
 from lxml import html
 from time import sleep
+import re
 
 class Parser(object):
     def __init__(self, job, driver=None, html=None, keep_driver = False):
@@ -168,9 +169,19 @@ class Parser(object):
             result = [x for x in result if not (x in seen or seen.add(x))]
             
         # Keep only unique values if the unique option is set
-        if len(set(["--filter", "-f"]) & set(options.keys())) > 0:
-            seen = set()
-            result = [x for x in result if not (x in seen or seen.add(x))]
+        filter_option = set(["--filter", "-f"]) & set(options.keys())
+        if len(filter_option) > 0:
+            expr = options[filter_option.pop()][0] # Get first argument of filter option
+            regex = re.compile(expr)
+            if (len(set(["--inverse", "-i"]) & set(options.keys()))) > 0:
+                inverse = True
+            else:
+                inverse = False
+            result = list(filter(lambda i: \
+                                 bool(regex.search(i)) if not inverse \
+                                 else not bool(regex.search(i)) , result))
+            if len(result) == 0:
+                return None
         
         # If the result is a single value and not a list, then collapse
         # the list, unless this behaviour is turned off in the options
@@ -205,8 +216,8 @@ class Parser(object):
 
                 for key, value in job.items():
                     result[key] = self.save(value)
-                    if result[key] == None:
-                        continue
+                    break_outer = True if result[key] == None else False
+                if break_outer: continue
                     
                 if "Keys" in job.keys():
                     if group_by != ".":
@@ -224,9 +235,7 @@ class Parser(object):
                             
                 if "Save" in job.keys():
                     result = result["Save"]
-                    
-                
-                    
+                      
                 results.append(result)
 
             if len(keys) > 0:

@@ -152,3 +152,30 @@ def test_pokedex():
     test_obj.start()
     assert test_obj.storage == result
     
+    ###################
+    # Eight test job  #
+    ###################
+    job = dedent("""
+        Save:
+            Group by: //div[@class="pokemon-info"]
+            Keys: /h5
+            id: /p[@class="id"]
+            abilities: //div[@class="abilities"]/span -f Flying
+            
+     """).strip()
+    result = {'Bulbasaur': {'id': '#001', 'abilities': ['Grass', 'Poison']},
+              'Ivysaur': {'id': '#002', 'abilities': ['Grass', 'Poison']},
+              'Venusaur': {'id': '#003', 'abilities': ['Grass', 'Poison']},
+              'Charmander': {'id': '#004', 'abilities': 'Fire'},
+              'Charmeleon': {'id': '#005', 'abilities': 'Fire'},
+              'Charizard': {'id': '#006', 'abilities': ['Fire', 'Flying']},
+              'Squirtle': {'id': '#007', 'abilities': 'Water'},
+              'Wartortle': {'id': '#008', 'abilities': 'Water'},
+              'Blastoise': {'id': '#009', 'abilities': 'Water'},
+              'Caterpie': {'id': '#010', 'abilities': 'Bug'},
+              'Metapod': {'id': '#011', 'abilities': 'Bug'},
+              'Butterfree': {'id': '#012', 'abilities': ['Bug', 'Flying']}}
+    test_obj = Parser(job, html=read_data)
+    test_obj.start()
+    assert test_obj.storage == result
+    
