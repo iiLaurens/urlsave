@@ -1,0 +1,9 @@
+Url: https://careers.aegon.com/en/vacancies/?query=&Cities=Cities-The-Hague&JobFamily=JobFamily-Asset-Management&JobFamily=JobFamily-Finance&JobFamily=JobFamily-Information-Technology&JobFamily=JobFamily-Investments
+Multipage:
+    Next: //li[contains(@class, "pagination__item--next")]/a
+    Max pages: 5
+    Save:
+        Group by: //div[@class="vacancy-items__item"]
+        Title: //a
+        Company: Aegon --text
+        Division: //svg[1]/title

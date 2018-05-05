@@ -102,7 +102,10 @@ class Parser(object):
             
             if page < max_pages:
                 self.driver.implicitly_wait(0)
-                e = self.driver.find_element_by_xpath(job["Next"])
+                try:
+                    e = self.driver.find_element_by_xpath(job["Next"])
+                except:
+                      break  
                 self.driver.execute_script("return arguments[0].scrollIntoView();", e)
                 
                 # Give the browser some time to do it's thing
@@ -142,6 +145,10 @@ class Parser(object):
         # Seperate options from XPath string
         options = set(["-"+e for e in job.split(" -")[1:]])
         job = job.split(" -")[0]
+        
+        #
+        if len(set(["--text", "-t"]) & options) > 0:
+            return job
         
         # Get results
         result = self.xpath(job)

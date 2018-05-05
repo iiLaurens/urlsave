@@ -1,0 +1,5 @@
+Url: https://www.robeco.com/nl/carriere/vacatures/
+Save:
+    Group by: //a[@class="arrow"]
+    Title: ./@title
+    Company: Robeco --text
