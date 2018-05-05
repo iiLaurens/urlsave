@@ -143,11 +143,12 @@ class Parser(object):
 
     def save_xpath(self, job):
         # Seperate options from XPath string
-        options = set(["-"+e for e in job.split(" -")[1:]])
+        options = [("-"+e).split(" ") for e in job.split(" -")[1:]]
+        options = {x[0]:x[1:] for x in options}
         job = job.split(" -")[0]
         
         #
-        if len(set(["--text", "-t"]) & options) > 0:
+        if len(set(["--text", "-t"]) & set(options.keys())) > 0:
             return job
         
         # Get results
@@ -162,13 +163,18 @@ class Parser(object):
                   else e.strip() for e in result]
         
         # Keep only unique values if the unique option is set
-        if len(set(["--unique", "-u"]) & options) > 0:
+        if len(set(["--unique", "-u"]) & set(options.keys())) > 0:
+            seen = set()
+            result = [x for x in result if not (x in seen or seen.add(x))]
+            
+        # Keep only unique values if the unique option is set
+        if len(set(["--filter", "-f"]) & set(options.keys())) > 0:
             seen = set()
             result = [x for x in result if not (x in seen or seen.add(x))]
         
         # If the result is a single value and not a list, then collapse
         # the list, unless this behaviour is turned off in the options
-        if len(set(["--force-list", "-l"]) & options) == 0:
+        if len(set(["--force-list", "-l"]) & set(options.keys())) == 0:
             result = result if len(result) != 1 else result[0]
             
         return result
@@ -199,6 +205,8 @@ class Parser(object):
 
                 for key, value in job.items():
                     result[key] = self.save(value)
+                    if result[key] == None:
+                        continue
                     
                 if "Keys" in job.keys():
                     if group_by != ".":
