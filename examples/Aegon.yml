@@ -6,4 +6,4 @@ Multipage:
         Group by: //div[@class="vacancy-items__item"]
         Title: //a
         Company: Aegon --text
-        Division: //svg[1]/title
+        Division: //svg[1]/title -f [aA]sset [mM]anagement

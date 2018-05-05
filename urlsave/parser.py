@@ -171,7 +171,7 @@ class Parser(object):
         # Keep only unique values if the unique option is set
         filter_option = set(["--filter", "-f"]) & set(options.keys())
         if len(filter_option) > 0:
-            expr = options[filter_option.pop()][0] # Get first argument of filter option
+            expr = " ".join(options[filter_option.pop()]) # Get filter expression (and join back it if it contained spaces)
             regex = re.compile(expr)
             if (len(set(["--inverse", "-i"]) & set(options.keys()))) > 0:
                 inverse = True
