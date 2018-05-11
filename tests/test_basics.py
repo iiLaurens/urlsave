@@ -20,8 +20,7 @@ def test_pokedex():
               'Charizard', 'Squirtle', 'Wartortle', 'Blastoise', 'Caterpie',
               'Metapod', 'Butterfree']
     test_obj = Parser(job, html=read_data)
-    test_obj.start()
-    assert test_obj.storage == result
+    assert test_obj.parse() == result
     
     
     ###################
@@ -48,8 +47,7 @@ def test_pokedex():
               {'name': 'Metapod', 'id': '#011', 'abilities': 'Bug'},
               {'name': 'Butterfree', 'id': '#012', 'abilities': ['Bug', 'Flying']}]
     test_obj = Parser(job, html=read_data)
-    test_obj.start()
-    assert test_obj.storage == result
+    assert test_obj.parse() == result
     
     
     ##################
@@ -69,8 +67,7 @@ def test_pokedex():
                       '#008', '#009', '#010', '#011', '#012'],
                'abilities': ['Grass', 'Poison', 'Fire', 'Flying', 'Water', 'Bug']}]
     test_obj = Parser(job, html=read_data)
-    test_obj.start()
-    assert test_obj.storage == result
+    assert test_obj.parse() == result
     
     ###################
     # Fourth test job #
@@ -89,8 +86,7 @@ def test_pokedex():
               'Blastoise': 'Water', 'Caterpie': 'Bug', 'Metapod': 'Bug',
               'Butterfree': ['Bug', 'Flying']}
     test_obj = Parser(job, html=read_data)
-    test_obj.start()
-    assert test_obj.storage == result
+    assert test_obj.parse() == result
     
     ###################
     # Fifth test job #
@@ -116,8 +112,7 @@ def test_pokedex():
               'Metapod': {'id': '#011', 'abilities': 'Bug'},
               'Butterfree': {'id': '#012', 'abilities': ['Bug', 'Flying']}}
     test_obj = Parser(job, html=read_data)
-    test_obj.start()
-    assert test_obj.storage == result
+    assert test_obj.parse() == result
     
     ##################
     # Sixth test job #
@@ -133,8 +128,7 @@ def test_pokedex():
               'Squirtle': '#007', 'Wartortle': '#008', 'Blastoise': '#009',
               'Caterpie': '#010', 'Metapod': '#011', 'Butterfree': '#012'}
     test_obj = Parser(job, html=read_data)
-    test_obj.start()
-    assert test_obj.storage == result
+    assert test_obj.parse() == result
     
     ####################
     # Seventh test job #
@@ -149,8 +143,7 @@ def test_pokedex():
               'Squirtle': '#007', 'Wartortle': '#008', 'Blastoise': '#009',
               'Caterpie': '#010', 'Metapod': '#011', 'Butterfree': '#012'}
     test_obj = Parser(job, html=read_data)
-    test_obj.start()
-    assert test_obj.storage == result
+    assert test_obj.parse() == result
     
     ###################
     # Eight test job  #
@@ -166,6 +159,5 @@ def test_pokedex():
     result = {'Charizard': {'id': '#006', 'abilities': 'Flying'},
               'Butterfree': {'id': '#012', 'abilities': 'Flying'}}
     test_obj = Parser(job, html=read_data)
-    test_obj.start()
-    assert test_obj.storage == result
+    assert test_obj.parse() == result
     

@@ -38,8 +38,7 @@ def test_tweakers():
      """).strip()
     
     test_obj = Parser(job, driver=driver, keep_driver=True)
-    test_obj.start()
-    assert len(test_obj.storage) == 25
+    assert len(test_obj.parse()) == 25
         
     ##################
     # Second test job #
@@ -61,8 +60,7 @@ def test_tweakers():
      """).strip()
     
     test_obj = Parser(job, driver=driver, keep_driver=True)
-    test_obj.start()
-    assert len(test_obj.storage) == 75
+    assert len(test_obj.parse()) == 75
     
     
    

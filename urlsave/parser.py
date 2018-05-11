@@ -28,7 +28,7 @@ class Parser(object):
             raise Exception("No URL given in job config")
         
         
-    def start(self):
+    def parse(self):
         # Parse the URL. Either use a real webdriver (if available) to fetch
         # html from an url or fall back on provided html
         if self.driver and self.job.get('Url'):
@@ -50,6 +50,9 @@ class Parser(object):
         
         if self.driver and not self.keep_driver:
             self.driver.quit()
+        
+        return self.storage
+    
     
     def navigate(self, jobs):
         jobs = jobs.copy() # Prevent changes to original job by making copy
@@ -71,6 +74,7 @@ class Parser(object):
         self.page = html.fromstring(self.html)
         self.active_element = self.page
         
+        
     def xpath(self, path):
         # Test validity of XPath
         path = path.strip()
@@ -83,6 +87,7 @@ class Parser(object):
             path = path[:slash_pos] + "." + path[slash_pos:]
         
         return self.active_element.xpath(path)
+    
     
     def multipage(self, job):
         max_pages = job.get("Max pages", 10)
@@ -139,7 +144,6 @@ class Parser(object):
                 raise Exception("This case is not programmed yet")
         
         return result
-              
             
 
     def save_xpath(self, job):
@@ -197,7 +201,6 @@ class Parser(object):
         
         if type(job) == dict:
             job = job.copy() # Prevent changes to original job by making copy
-            original_job = job.copy()
 
             results = []
             keys = []
@@ -235,8 +238,9 @@ class Parser(object):
                             
                 if "Save" in job.keys():
                     result = result["Save"]
-                      
-                results.append(result)
+                
+                if len(result) > 0:
+                    results.append(result)
 
             if len(keys) > 0:
                 results = dict(zip(keys, results))

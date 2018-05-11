@@ -1,0 +1,6 @@
+Url: https://www.dnb.nl/werken-bij/vacatures/index.jsp?werkervaring=junior&opleiding=WO
+Save:
+    Group by: //ul[@class="link-list"]//a
+    Title: /@title
+    Company: DNB --text
+    experience: Junior --text
