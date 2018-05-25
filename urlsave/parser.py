@@ -8,10 +8,9 @@ This is a test script file.
 from poyo import parse_string
 from lxml import html
 from time import sleep
-import re
 
 class Parser(object):
-    def __init__(self, job, driver=None, html=None, keep_driver = False):
+    def __init__(self, job, driver=None, html=None, keep_driver = False, test_mode = False):
         # If we have raw string, then transform it into a dictionary
         if type(job) == str:
             job = parse_string(job)
@@ -24,7 +23,7 @@ class Parser(object):
         
         if not driver and not html:
             raise Exception("No HTML provided and no webdriver found")
-        elif driver and not self.job.get('Url'):
+        elif driver and not self.job.get('Url') and not test_mode:
             raise Exception("No URL given in job config")
         
         
@@ -33,6 +32,8 @@ class Parser(object):
         # html from an url or fall back on provided html
         if self.driver and self.job.get('Url'):
             self.driver.get(self.job['Url'])
+        
+        if self.driver:
             self.html = self.driver.page_source
             
         self.page = html.fromstring(self.html)
@@ -171,21 +172,6 @@ class Parser(object):
         if len(set(["--unique", "-u"]) & set(options.keys())) > 0:
             seen = set()
             result = [x for x in result if not (x in seen or seen.add(x))]
-            
-        # Keep only unique values if the unique option is set
-        filter_option = set(["--filter", "-f"]) & set(options.keys())
-        if len(filter_option) > 0:
-            expr = " ".join(options[filter_option.pop()]) # Get filter expression (and join back it if it contained spaces)
-            regex = re.compile(expr)
-            if (len(set(["--inverse", "-i"]) & set(options.keys()))) > 0:
-                inverse = True
-            else:
-                inverse = False
-            result = list(filter(lambda i: \
-                                 bool(regex.search(i)) if not inverse \
-                                 else not bool(regex.search(i)) , result))
-            if len(result) == 0:
-                return None
         
         # If the result is a single value and not a list, then collapse
         # the list, unless this behaviour is turned off in the options

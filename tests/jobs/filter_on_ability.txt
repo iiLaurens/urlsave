@@ -1,0 +1,4 @@
+Save:
+    Group by: //div[@class="pokemon-info" and contains(., "Normal")]
+    Keys: /h5
+    Save: //div[@class="abilities"]/span -l

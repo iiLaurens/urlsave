@@ -1,0 +1,14 @@
+[
+  "Rattata",
+  "Raticate",
+  "Meowth",
+  "Persian",
+  "Lickitung",
+  "Chansey",
+  "Kangaskhan",
+  "Tauros",
+  "Ditto",
+  "Eevee",
+  "Porygon",
+  "Snorlax"
+]

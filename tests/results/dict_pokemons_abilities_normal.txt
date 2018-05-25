@@ -1,0 +1,78 @@
+{
+  "Pidgey": [
+    "Normal",
+    "Flying"
+  ],
+  "Pidgeotto": [
+    "Normal",
+    "Flying"
+  ],
+  "Pidgeot": [
+    "Normal",
+    "Flying"
+  ],
+  "Rattata": [
+    "Normal"
+  ],
+  "Raticate": [
+    "Normal"
+  ],
+  "Spearow": [
+    "Normal",
+    "Flying"
+  ],
+  "Fearow": [
+    "Normal",
+    "Flying"
+  ],
+  "Jigglypuff": [
+    "Normal",
+    "Fairy"
+  ],
+  "Wigglytuff": [
+    "Normal",
+    "Fairy"
+  ],
+  "Meowth": [
+    "Normal"
+  ],
+  "Persian": [
+    "Normal"
+  ],
+  "Farfetchd": [
+    "Normal",
+    "Flying"
+  ],
+  "Doduo": [
+    "Normal",
+    "Flying"
+  ],
+  "Dodrio": [
+    "Normal",
+    "Flying"
+  ],
+  "Lickitung": [
+    "Normal"
+  ],
+  "Chansey": [
+    "Normal"
+  ],
+  "Kangaskhan": [
+    "Normal"
+  ],
+  "Tauros": [
+    "Normal"
+  ],
+  "Ditto": [
+    "Normal"
+  ],
+  "Eevee": [
+    "Normal"
+  ],
+  "Porygon": [
+    "Normal"
+  ],
+  "Snorlax": [
+    "Normal"
+  ]
+}

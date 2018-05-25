@@ -1,0 +1,3 @@
+Save:
+    Keys: //div[@class="pokemon-info"]/h5
+    Save: //div[@class="pokemon-info"]/p[@class="id"]

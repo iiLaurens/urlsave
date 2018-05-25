@@ -1,0 +1,958 @@
+[
+  {
+    "name": "Bulbasaur",
+    "id": "Nr.001",
+    "abilities": [
+      "Grass",
+      "Poison"
+    ]
+  },
+  {
+    "name": "Ivysaur",
+    "id": "Nr.002",
+    "abilities": [
+      "Grass",
+      "Poison"
+    ]
+  },
+  {
+    "name": "Venusaur",
+    "id": "Nr.003",
+    "abilities": [
+      "Grass",
+      "Poison"
+    ]
+  },
+  {
+    "name": "Charmander",
+    "id": "Nr.004",
+    "abilities": "Fire"
+  },
+  {
+    "name": "Charmeleon",
+    "id": "Nr.005",
+    "abilities": "Fire"
+  },
+  {
+    "name": "Charizard",
+    "id": "Nr.006",
+    "abilities": [
+      "Fire",
+      "Flying"
+    ]
+  },
+  {
+    "name": "Squirtle",
+    "id": "Nr.007",
+    "abilities": "Water"
+  },
+  {
+    "name": "Wartortle",
+    "id": "Nr.008",
+    "abilities": "Water"
+  },
+  {
+    "name": "Blastoise",
+    "id": "Nr.009",
+    "abilities": "Water"
+  },
+  {
+    "name": "Caterpie",
+    "id": "Nr.010",
+    "abilities": "Bug"
+  },
+  {
+    "name": "Metapod",
+    "id": "Nr.011",
+    "abilities": "Bug"
+  },
+  {
+    "name": "Butterfree",
+    "id": "Nr.012",
+    "abilities": [
+      "Bug",
+      "Flying"
+    ]
+  },
+  {
+    "name": "Weedle",
+    "id": "Nr.013",
+    "abilities": [
+      "Bug",
+      "Poison"
+    ]
+  },
+  {
+    "name": "Kakuna",
+    "id": "Nr.014",
+    "abilities": [
+      "Bug",
+      "Poison"
+    ]
+  },
+  {
+    "name": "Beedrill",
+    "id": "Nr.015",
+    "abilities": [
+      "Bug",
+      "Poison"
+    ]
+  },
+  {
+    "name": "Pidgey",
+    "id": "Nr.016",
+    "abilities": [
+      "Normal",
+      "Flying"
+    ]
+  },
+  {
+    "name": "Pidgeotto",
+    "id": "Nr.017",
+    "abilities": [
+      "Normal",
+      "Flying"
+    ]
+  },
+  {
+    "name": "Pidgeot",
+    "id": "Nr.018",
+    "abilities": [
+      "Normal",
+      "Flying"
+    ]
+  },
+  {
+    "name": "Rattata",
+    "id": "Nr.019",
+    "abilities": "Normal"
+  },
+  {
+    "name": "Raticate",
+    "id": "Nr.020",
+    "abilities": "Normal"
+  },
+  {
+    "name": "Spearow",
+    "id": "Nr.021",
+    "abilities": [
+      "Normal",
+      "Flying"
+    ]
+  },
+  {
+    "name": "Fearow",
+    "id": "Nr.022",
+    "abilities": [
+      "Normal",
+      "Flying"
+    ]
+  },
+  {
+    "name": "Ekans",
+    "id": "Nr.023",
+    "abilities": "Poison"
+  },
+  {
+    "name": "Arbok",
+    "id": "Nr.024",
+    "abilities": "Poison"
+  },
+  {
+    "name": "Pikachu",
+    "id": "Nr.025",
+    "abilities": "Electric"
+  },
+  {
+    "name": "Raichu",
+    "id": "Nr.026",
+    "abilities": "Electric"
+  },
+  {
+    "name": "Sandshrew",
+    "id": "Nr.027",
+    "abilities": "Ground"
+  },
+  {
+    "name": "Sandslash",
+    "id": "Nr.028",
+    "abilities": "Ground"
+  },
+  {
+    "name": "Nidoran (female)",
+    "id": "Nr.029",
+    "abilities": "Poison"
+  },
+  {
+    "name": "Nidorina",
+    "id": "Nr.030",
+    "abilities": "Poison"
+  },
+  {
+    "name": "Nidoqueen",
+    "id": "Nr.031",
+    "abilities": [
+      "Poison",
+      "Ground"
+    ]
+  },
+  {
+    "name": "Nidoran (male)",
+    "id": "Nr.032",
+    "abilities": "Poison"
+  },
+  {
+    "name": "Nidorino",
+    "id": "Nr.033",
+    "abilities": "Poison"
+  },
+  {
+    "name": "Nidoking",
+    "id": "Nr.034",
+    "abilities": [
+      "Poison",
+      "Ground"
+    ]
+  },
+  {
+    "name": "Clefairy",
+    "id": "Nr.035",
+    "abilities": "Fairy"
+  },
+  {
+    "name": "Clefable",
+    "id": "Nr.036",
+    "abilities": "Fairy"
+  },
+  {
+    "name": "Vulpix",
+    "id": "Nr.037",
+    "abilities": "Fire"
+  },
+  {
+    "name": "Ninetales",
+    "id": "Nr.038",
+    "abilities": "Fire"
+  },
+  {
+    "name": "Jigglypuff",
+    "id": "Nr.039",
+    "abilities": [
+      "Normal",
+      "Fairy"
+    ]
+  },
+  {
+    "name": "Wigglytuff",
+    "id": "Nr.040",
+    "abilities": [
+      "Normal",
+      "Fairy"
+    ]
+  },
+  {
+    "name": "Zubat",
+    "id": "Nr.041",
+    "abilities": [
+      "Poison",
+      "Flying"
+    ]
+  },
+  {
+    "name": "Golbat",
+    "id": "Nr.042",
+    "abilities": [
+      "Poison",
+      "Flying"
+    ]
+  },
+  {
+    "name": "Oddish",
+    "id": "Nr.043",
+    "abilities": [
+      "Grass",
+      "Poison"
+    ]
+  },
+  {
+    "name": "Gloom",
+    "id": "Nr.044",
+    "abilities": [
+      "Grass",
+      "Poison"
+    ]
+  },
+  {
+    "name": "Vileplume",
+    "id": "Nr.045",
+    "abilities": [
+      "Grass",
+      "Poison"
+    ]
+  },
+  {
+    "name": "Paras",
+    "id": "Nr.046",
+    "abilities": [
+      "Bug",
+      "Grass"
+    ]
+  },
+  {
+    "name": "Parasect",
+    "id": "Nr.047",
+    "abilities": [
+      "Bug",
+      "Grass"
+    ]
+  },
+  {
+    "name": "Venonat",
+    "id": "Nr.048",
+    "abilities": [
+      "Bug",
+      "Poison"
+    ]
+  },
+  {
+    "name": "Venomoth",
+    "id": "Nr.049",
+    "abilities": [
+      "Bug",
+      "Poison"
+    ]
+  },
+  {
+    "name": "Diglett",
+    "id": "Nr.050",
+    "abilities": "Ground"
+  },
+  {
+    "name": "Dugtrio",
+    "id": "Nr.051",
+    "abilities": "Ground"
+  },
+  {
+    "name": "Meowth",
+    "id": "Nr.052",
+    "abilities": "Normal"
+  },
+  {
+    "name": "Persian",
+    "id": "Nr.053",
+    "abilities": "Normal"
+  },
+  {
+    "name": "Psyduck",
+    "id": "Nr.054",
+    "abilities": "Water"
+  },
+  {
+    "name": "Golduck",
+    "id": "Nr.055",
+    "abilities": "Water"
+  },
+  {
+    "name": "Mankey",
+    "id": "Nr.056",
+    "abilities": "Fighting"
+  },
+  {
+    "name": "Primeape",
+    "id": "Nr.057",
+    "abilities": "Fighting"
+  },
+  {
+    "name": "Growlithe",
+    "id": "Nr.058",
+    "abilities": "Fire"
+  },
+  {
+    "name": "Arcanine",
+    "id": "Nr.059",
+    "abilities": "Fire"
+  },
+  {
+    "name": "Poliwag",
+    "id": "Nr.060",
+    "abilities": "Water"
+  },
+  {
+    "name": "Poliwhirl",
+    "id": "Nr.061",
+    "abilities": "Water"
+  },
+  {
+    "name": "Poliwrath",
+    "id": "Nr.062",
+    "abilities": [
+      "Water",
+      "Fighting"
+    ]
+  },
+  {
+    "name": "Abra",
+    "id": "Nr.063",
+    "abilities": "Psychic"
+  },
+  {
+    "name": "Kadabra",
+    "id": "Nr.064",
+    "abilities": "Psychic"
+  },
+  {
+    "name": "Alakazam",
+    "id": "Nr.065",
+    "abilities": "Psychic"
+  },
+  {
+    "name": "Machop",
+    "id": "Nr.066",
+    "abilities": "Fighting"
+  },
+  {
+    "name": "Machoke",
+    "id": "Nr.067",
+    "abilities": "Fighting"
+  },
+  {
+    "name": "Machamp",
+    "id": "Nr.068",
+    "abilities": "Fighting"
+  },
+  {
+    "name": "Bellsprout",
+    "id": "Nr.069",
+    "abilities": [
+      "Grass",
+      "Poison"
+    ]
+  },
+  {
+    "name": "Weepinbell",
+    "id": "Nr.070",
+    "abilities": [
+      "Grass",
+      "Poison"
+    ]
+  },
+  {
+    "name": "Victreebel",
+    "id": "Nr.071",
+    "abilities": [
+      "Grass",
+      "Poison"
+    ]
+  },
+  {
+    "name": "Tentacool",
+    "id": "Nr.072",
+    "abilities": [
+      "Water",
+      "Poison"
+    ]
+  },
+  {
+    "name": "Tentacruel",
+    "id": "Nr.073",
+    "abilities": [
+      "Water",
+      "Poison"
+    ]
+  },
+  {
+    "name": "Geodude",
+    "id": "Nr.074",
+    "abilities": [
+      "Rock",
+      "Ground"
+    ]
+  },
+  {
+    "name": "Graveler",
+    "id": "Nr.075",
+    "abilities": [
+      "Rock",
+      "Ground"
+    ]
+  },
+  {
+    "name": "Golem",
+    "id": "Nr.076",
+    "abilities": [
+      "Rock",
+      "Ground"
+    ]
+  },
+  {
+    "name": "Ponyta",
+    "id": "Nr.077",
+    "abilities": "Fire"
+  },
+  {
+    "name": "Rapidash",
+    "id": "Nr.078",
+    "abilities": "Fire"
+  },
+  {
+    "name": "Slowpoke",
+    "id": "Nr.079",
+    "abilities": [
+      "Water",
+      "Psychic"
+    ]
+  },
+  {
+    "name": "Slowbro",
+    "id": "Nr.080",
+    "abilities": [
+      "Water",
+      "Psychic"
+    ]
+  },
+  {
+    "name": "Magnemite",
+    "id": "Nr.081",
+    "abilities": [
+      "Electric",
+      "Steel"
+    ]
+  },
+  {
+    "name": "Magneton",
+    "id": "Nr.082",
+    "abilities": [
+      "Electric",
+      "Steel"
+    ]
+  },
+  {
+    "name": "Farfetchd",
+    "id": "Nr.083",
+    "abilities": [
+      "Normal",
+      "Flying"
+    ]
+  },
+  {
+    "name": "Doduo",
+    "id": "Nr.084",
+    "abilities": [
+      "Normal",
+      "Flying"
+    ]
+  },
+  {
+    "name": "Dodrio",
+    "id": "Nr.085",
+    "abilities": [
+      "Normal",
+      "Flying"
+    ]
+  },
+  {
+    "name": "Seel",
+    "id": "Nr.086",
+    "abilities": "Water"
+  },
+  {
+    "name": "Dewgong",
+    "id": "Nr.087",
+    "abilities": [
+      "Water",
+      "Ice"
+    ]
+  },
+  {
+    "name": "Grimer",
+    "id": "Nr.088",
+    "abilities": "Poison"
+  },
+  {
+    "name": "Muk",
+    "id": "Nr.089",
+    "abilities": "Poison"
+  },
+  {
+    "name": "Shellder",
+    "id": "Nr.090",
+    "abilities": "Water"
+  },
+  {
+    "name": "Cloyster",
+    "id": "Nr.091",
+    "abilities": [
+      "Water",
+      "Ice"
+    ]
+  },
+  {
+    "name": "Gastly",
+    "id": "Nr.092",
+    "abilities": [
+      "Ghost",
+      "Poison"
+    ]
+  },
+  {
+    "name": "Haunter",
+    "id": "Nr.093",
+    "abilities": [
+      "Ghost",
+      "Poison"
+    ]
+  },
+  {
+    "name": "Gengar",
+    "id": "Nr.094",
+    "abilities": [
+      "Ghost",
+      "Poison"
+    ]
+  },
+  {
+    "name": "Onix",
+    "id": "Nr.095",
+    "abilities": [
+      "Rock",
+      "Ground"
+    ]
+  },
+  {
+    "name": "Drowzee",
+    "id": "Nr.096",
+    "abilities": "Psychic"
+  },
+  {
+    "name": "Hypno",
+    "id": "Nr.097",
+    "abilities": "Psychic"
+  },
+  {
+    "name": "Krabby",
+    "id": "Nr.098",
+    "abilities": "Water"
+  },
+  {
+    "name": "Kingler",
+    "id": "Nr.099",
+    "abilities": "Water"
+  },
+  {
+    "name": "Voltorb",
+    "id": "Nr.100",
+    "abilities": "Electric"
+  },
+  {
+    "name": "Electrode",
+    "id": "Nr.101",
+    "abilities": "Electric"
+  },
+  {
+    "name": "Exeggcute",
+    "id": "Nr.102",
+    "abilities": [
+      "Grass",
+      "Psychic"
+    ]
+  },
+  {
+    "name": "Exeggutor",
+    "id": "Nr.103",
+    "abilities": [
+      "Grass",
+      "Psychic"
+    ]
+  },
+  {
+    "name": "Cubone",
+    "id": "Nr.104",
+    "abilities": "Ground"
+  },
+  {
+    "name": "Marowak",
+    "id": "Nr.105",
+    "abilities": "Ground"
+  },
+  {
+    "name": "Hitmonlee",
+    "id": "Nr.106",
+    "abilities": "Fighting"
+  },
+  {
+    "name": "Hitmonchan",
+    "id": "Nr.107",
+    "abilities": "Fighting"
+  },
+  {
+    "name": "Lickitung",
+    "id": "Nr.108",
+    "abilities": "Normal"
+  },
+  {
+    "name": "Koffing",
+    "id": "Nr.109",
+    "abilities": "Poison"
+  },
+  {
+    "name": "Weezing",
+    "id": "Nr.110",
+    "abilities": "Poison"
+  },
+  {
+    "name": "Rhyhorn",
+    "id": "Nr.111",
+    "abilities": [
+      "Ground",
+      "Rock"
+    ]
+  },
+  {
+    "name": "Rhydon",
+    "id": "Nr.112",
+    "abilities": [
+      "Ground",
+      "Rock"
+    ]
+  },
+  {
+    "name": "Chansey",
+    "id": "Nr.113",
+    "abilities": "Normal"
+  },
+  {
+    "name": "Tangela",
+    "id": "Nr.114",
+    "abilities": "Grass"
+  },
+  {
+    "name": "Kangaskhan",
+    "id": "Nr.115",
+    "abilities": "Normal"
+  },
+  {
+    "name": "Horsea",
+    "id": "Nr.116",
+    "abilities": "Water"
+  },
+  {
+    "name": "Seadra",
+    "id": "Nr.117",
+    "abilities": "Water"
+  },
+  {
+    "name": "Goldeen",
+    "id": "Nr.118",
+    "abilities": "Water"
+  },
+  {
+    "name": "Seaking",
+    "id": "Nr.119",
+    "abilities": "Water"
+  },
+  {
+    "name": "Staryu",
+    "id": "Nr.120",
+    "abilities": "Water"
+  },
+  {
+    "name": "Starmie",
+    "id": "Nr.121",
+    "abilities": [
+      "Water",
+      "Psychic"
+    ]
+  },
+  {
+    "name": "Mr. Mime",
+    "id": "Nr.122",
+    "abilities": [
+      "Psychic",
+      "Fairy"
+    ]
+  },
+  {
+    "name": "Scyther",
+    "id": "Nr.123",
+    "abilities": [
+      "Bug",
+      "Flying"
+    ]
+  },
+  {
+    "name": "Jynx",
+    "id": "Nr.124",
+    "abilities": [
+      "Ice",
+      "Psychic"
+    ]
+  },
+  {
+    "name": "Electabuzz",
+    "id": "Nr.125",
+    "abilities": "Electric"
+  },
+  {
+    "name": "Magmar",
+    "id": "Nr.126",
+    "abilities": "Fire"
+  },
+  {
+    "name": "Pinsir",
+    "id": "Nr.127",
+    "abilities": "Bug"
+  },
+  {
+    "name": "Tauros",
+    "id": "Nr.128",
+    "abilities": "Normal"
+  },
+  {
+    "name": "Magikarp",
+    "id": "Nr.129",
+    "abilities": "Water"
+  },
+  {
+    "name": "Gyarados",
+    "id": "Nr.130",
+    "abilities": [
+      "Water",
+      "Flying"
+    ]
+  },
+  {
+    "name": "Lapras",
+    "id": "Nr.131",
+    "abilities": [
+      "Water",
+      "Ice"
+    ]
+  },
+  {
+    "name": "Ditto",
+    "id": "Nr.132",
+    "abilities": "Normal"
+  },
+  {
+    "name": "Eevee",
+    "id": "Nr.133",
+    "abilities": "Normal"
+  },
+  {
+    "name": "Vaporeon",
+    "id": "Nr.134",
+    "abilities": "Water"
+  },
+  {
+    "name": "Jolteon",
+    "id": "Nr.135",
+    "abilities": "Electric"
+  },
+  {
+    "name": "Flareon",
+    "id": "Nr.136",
+    "abilities": "Fire"
+  },
+  {
+    "name": "Porygon",
+    "id": "Nr.137",
+    "abilities": "Normal"
+  },
+  {
+    "name": "Omanyte",
+    "id": "Nr.138",
+    "abilities": [
+      "Rock",
+      "Water"
+    ]
+  },
+  {
+    "name": "Omastar",
+    "id": "Nr.139",
+    "abilities": [
+      "Rock",
+      "Water"
+    ]
+  },
+  {
+    "name": "Kabuto",
+    "id": "Nr.140",
+    "abilities": [
+      "Rock",
+      "Water"
+    ]
+  },
+  {
+    "name": "Kabutops",
+    "id": "Nr.141",
+    "abilities": [
+      "Rock",
+      "Water"
+    ]
+  },
+  {
+    "name": "Aerodactyl",
+    "id": "Nr.142",
+    "abilities": [
+      "Rock",
+      "Flying"
+    ]
+  },
+  {
+    "name": "Snorlax",
+    "id": "Nr.143",
+    "abilities": "Normal"
+  },
+  {
+    "name": "Articuno",
+    "id": "Nr.144",
+    "abilities": [
+      "Ice",
+      "Flying"
+    ]
+  },
+  {
+    "name": "Zapdos",
+    "id": "Nr.145",
+    "abilities": [
+      "Electric",
+      "Flying"
+    ]
+  },
+  {
+    "name": "Moltres",
+    "id": "Nr.146",
+    "abilities": [
+      "Fire",
+      "Flying"
+    ]
+  },
+  {
+    "name": "Dratini",
+    "id": "Nr.147",
+    "abilities": "Dragon"
+  },
+  {
+    "name": "Dragonair",
+    "id": "Nr.148",
+    "abilities": "Dragon"
+  },
+  {
+    "name": "Dragonite",
+    "id": "Nr.149",
+    "abilities": [
+      "Dragon",
+      "Flying"
+    ]
+  },
+  {
+    "name": "Mewtwo",
+    "id": "Nr.150",
+    "abilities": "Psychic"
+  },
+  {
+    "name": "Mew",
+    "id": "Nr.151",
+    "abilities": "Psychic"
+  }
+]

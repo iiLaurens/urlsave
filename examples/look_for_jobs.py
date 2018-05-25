@@ -7,9 +7,8 @@ Created on Fri May 11 18:45:57 2018
 
 import sqlite3
 from selenium.webdriver.chrome.options import Options
-from selenium import webdriver
 import os
-from urlsave.parser import Parser
+from urlsave import Parser, Browser
 from datetime import datetime
 from json import dumps
 
@@ -52,7 +51,7 @@ def create_browser_session():
     
     chrome_driver = 'c:\Windows\chromedriver.exe'
     
-    driver = webdriver.Chrome(chrome_options=chrome_options, 
+    driver = Browser(chrome_options=chrome_options, 
                               executable_path=chrome_driver)
     
     return driver
@@ -121,9 +120,15 @@ def update_db(conn, joblist):
     conn.commit()
     
 def main():
-    driver = create_browser_session()
-    joblist = get_joblist(driver)
-    driver.quit()
+    chrome_options = Options()
+    chrome_options.add_argument("--window-size=1920x1080")
+    chrome_options.add_argument("--disable-infobars")
+    
+    chrome_driver = 'c:\Windows\chromedriver.exe'
+    
+    with Browser(chrome_options=chrome_options, executable_path=chrome_driver) as driver:
+        joblist = get_joblist(driver)
+
     
     conn = connect_db("D:/Temp/db.sqlite")
     update_db(conn, joblist)
