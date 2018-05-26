@@ -36,15 +36,16 @@ class Parser(object):
         if self.driver:
             self.html = self.driver.page_source
             
-        self.page = html.fromstring(self.html)
-        self.active_element = self.page
-        
         if self.driver and self.job.get('Navigate'):
             self.navigate(self.job['Navigate'])
+            
+        self.page = html.fromstring(self.html)
+        self.active_element = self.page
         
         # Parse list
         if self.job.get("Multipage"):
             self.storage = self.multipage(self.job['Multipage'])
+            
         elif self.job.get("Save"):
             self.storage = self.save(self.job['Save'])
             
@@ -92,57 +93,58 @@ class Parser(object):
     
     def multipage(self, job):
         max_pages = job.get("Max pages", 10)
+        pause_time = job.get("Pause", 0.5)
         next_path = job.get("Next")
+        scroll_load = job.get("Scrolling", False)
+        cumulative = job.get("Cumulative", False)
         
-        if not next_path or not job.get("Save"):
-            raise Exception("Multipage requires an XPath and Save")
-        
-        # Detect if the save in the multipage is grouped
-        if type(job["Save"]) == dict and job["Save"].get("Group by"):
-            is_grouped = True
-        else: is_grouped = False
-        
-        results = []
-        
-        for page in range(max_pages):
-            results.append(self.save(job["Save"]))
+        if not next_path and not scroll_load:
+            raise Exception("Multipage requires an XPath for next button")
             
-            if page < max_pages:
-                self.driver.implicitly_wait(0)
+        if scroll_load:
+            cumulative = True
+            last_height = self.driver.execute_script("return document.body.scrollHeight")
+        
+        for page in range(max_pages):           
+            self.driver.implicitly_wait(0)
+            
+            if not scroll_load:
                 try:
                     e = self.driver.find_element_by_xpath(job["Next"])
                 except:
-                      break  
+                      break
+                
+                # Scroll into view of the newxt button
                 self.driver.execute_script("return arguments[0].scrollIntoView();", e)
                 
-                # Give the browser some time to do it's thing
+                # Give the browser some time to scroll and then press the button
                 sleep(0.5)
                 e.click()
-                sleep(0.5)
-                
-                self.html = self.driver.page_source
-                self.page = html.fromstring(self.html)
-                self.active_element = self.page
+                sleep(pause_time)
+            else:
+                self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+                sleep(pause_time)
+                new_height = self.driver.execute_script("return document.body.scrollHeight")
+                if new_height == last_height:
+                    break
+                last_height = new_height
+            
+            # If our page does not dynamically load content (AJAX) on the press
+            # of the button, then we have to accumulate the results over the
+            # different pages ourself.
+            if not cumulative:
+                page_source = self.driver.page_source
+                page_tmp = html.fromstring(page_source)
+                for element in page_tmp.body.iterchildren():
+                    self.page.body.append(element)
         
-        if is_grouped:
-            if type(results[0]) == dict:
-                result = {}
-                for i in results:
-                    for k, v in i.items():
-                        result[k] = v
-            if type(results[0]) == list:
-                result = []
-                for i in results:
-                    for v in i:
-                        result.append(v)    
-        else:
-            if type(results[0]) == dict:
-                result = {}
-                for i in results:
-                    for k in i.keys():
-                        result[k] = result.get(k, []) + (i[k] if type(i[k]) == list else [i[k]])
-            if type(results[0]) == list:
-                raise Exception("This case is not programmed yet")
+        if cumulative:
+            self.html = self.driver.page_source
+            self.page = html.fromstring(self.html)
+        
+        self.active_element = self.page.body
+        
+        result = self.save(self.job['Save'])
         
         return result
             

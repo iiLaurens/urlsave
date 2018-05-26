@@ -1,0 +1,7 @@
+Multipage:
+    Scrolling: True
+Save:
+    Group by: //div[@class="pokemon-info"]
+    name: /h5
+    id: /p[@class="id"]
+    abilities: /div[@class="abilities"]/span

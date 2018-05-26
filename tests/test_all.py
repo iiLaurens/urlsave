@@ -41,7 +41,10 @@ def driver():
     ("pokemon_keys_to_details", "pokedex_full", "dict_pokemons_details"),
     ("pokemon_keys_to_numbers_no_grouping", "pokedex_full", "dict_pokemons_numbers"),
     ("filter_on_ability", "pokedex_full", "dict_pokemons_abilities_normal"),
-    ("filter_on_pure_normal", "pokedex_full", "dict_pokemons_pure_normal")
+    ("filter_on_pure_normal", "pokedex_full", "dict_pokemons_pure_normal"),
+    ("multipage_pokemons", "pokedex_a-1", "list_pokemons_details"),
+    ("multipage_pokemons_ajax", "pokedex_full_loading", "list_pokemons_details"),
+    ("multipage_pokemons_scroll", "pokedex_full_scroll_load", "list_pokemons_details"),
 ])
 def test_eval(driver, job, page, result):
     page = os.getcwd() + "\\tests\\pages\\" + page + ".html"

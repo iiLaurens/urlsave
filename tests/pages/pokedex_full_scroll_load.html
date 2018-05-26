@@ -1946,14 +1946,25 @@ x = `<li class="animating" style="opacity: 1; top: 0px; left: 0px;">
                     </div>
                 </li>`;
 	
+	var processing;
+	var cycle;
+	
 	$(document).ready(function(){
-		$("button").click(function(){
-			$(x).insertBefore("button");
-			$("button").unbind( "click" );
-			$("button").click(function(){
-				$(y).insertBefore("button");
-				$("button").remove()
-			});
+		cycle = 0;
+		$(document).scroll(function(e){
+			if (processing)
+				return false;
+
+			if ($(window).scrollTop() >= ($(document).height() - $(window).height())*0.9){
+				processing = true;
+				if (cycle == 0) {
+					$(x).insertBefore("a");
+				} else if (cycle == 1){
+					$(y).insertBefore("a");
+				}
+				cycle = cycle + 1;
+				processing = false;
+			}
 		});
 	});
 </script>
@@ -2942,7 +2953,7 @@ x = `<li class="animating" style="opacity: 1; top: 0px; left: 0px;">
                     </div>
                 </li>
 				
-				<button>load</button>
+				<a></a>
             </ul>
         </section>
     </div>
