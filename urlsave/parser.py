@@ -8,6 +8,7 @@ This is a test script file.
 from poyo import parse_string
 from lxml import html
 from time import sleep
+from functools import reduce, partial
 
 class Parser(object):
     def __init__(self, job, driver=None, html=None, keep_driver = False, test_mode = False):
@@ -105,10 +106,18 @@ class Parser(object):
             cumulative = True
             last_height = self.driver.execute_script("return document.body.scrollHeight")
         
+        results = []
+        
         for page in range(max_pages):           
             self.driver.implicitly_wait(0)
             
+            # If each page contains new items only, then we have to accumulate
+            # the results manually.
+            if not cumulative:
+                results.append(self.save(self.job["Save"]))
+            
             if not scroll_load:
+                # Try to find the next button in source, or stop if not found
                 try:
                     e = self.driver.find_element_by_xpath(job["Next"])
                 except:
@@ -122,6 +131,8 @@ class Parser(object):
                 e.click()
                 sleep(pause_time)
             else:
+                # Scrolling is needed to load new elements, so scroll down and
+                # check if we moved at all
                 self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
                 sleep(pause_time)
                 new_height = self.driver.execute_script("return document.body.scrollHeight")
@@ -129,22 +140,21 @@ class Parser(object):
                     break
                 last_height = new_height
             
-            # If our page does not dynamically load content (AJAX) on the press
-            # of the button, then we have to accumulate the results over the
-            # different pages ourself.
+            # Set next page
             if not cumulative:
-                page_source = self.driver.page_source
-                page_tmp = html.fromstring(page_source)
-                for element in page_tmp.body.iterchildren():
-                    self.page.body.append(element)
+                self.html = self.driver.page_source
+                self.page = html.fromstring(self.html)
+                self.active_element = self.page
         
-        if cumulative:
+        if not cumulative:
+            result = Parser.merge_results(results)
+        else:
             self.html = self.driver.page_source
             self.page = html.fromstring(self.html)
         
-        self.active_element = self.page.body
+            self.active_element = self.page.body
         
-        result = self.save(self.job['Save'])
+            result = self.save(self.job['Save'])
         
         return result
             
@@ -235,3 +245,35 @@ class Parser(object):
                 
             return results
 
+    @staticmethod
+    def merge_results(results):
+        # This function takes saved objects from several pages and combines
+        # them into a single object.
+        
+        if type(results[0]) == dict:
+            # Case: we have a saved object that was not grouped and in dict
+            # format. We should therefore combine all keys of the dicts, but
+            # also combine among shared keys. This is tricky, since
+            # the value of the dict can itself be a list, dict or scalar.
+            result = results[0]
+            for i in results[1:]:
+                for k in i.keys():
+                    if k not in result.keys():
+                        result[k] = i[k]
+                    else:
+                        result[k] = Parser.merge_results([result[k], i[k]])               
+        else:
+            # Case: we have a grouped object as a list object or scalar.
+            # We can simply merge the two lists since groups should be
+            # mutually exclusive.
+ 
+            result = []
+            for i in results:
+                if type(i) != list:
+                    result.append(i)
+                else:
+                    for v in i:
+                        result.append(v) 
+    
+        return result
+            
