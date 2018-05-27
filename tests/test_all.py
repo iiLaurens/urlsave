@@ -11,27 +11,11 @@ import os
 from urlsave import Parser, Browser
 from selenium.webdriver.chrome.options import Options
 
-def get_driver_options():
-    chrome_options = Options()
-    chrome_options.add_argument("--window-size=1920x1080")
-    chrome_options.add_argument("--disable-infobars")
-    #chrome_options.add_argument("--headless")
-    
-    chrome_driver = 'c:\Windows\chromedriver.exe'
-    
-    browser_args = {"chrome_options": chrome_options,
-                    "executable_path": chrome_driver}
-    
-    return browser_args
-
 @pytest.fixture(scope='session')  # one server to rule'em all
 def driver():  
-    browser_args = get_driver_options()
-    driver = Browser(**browser_args)
-    
-    yield driver
-    
-    driver.quit()
+    with Browser() as driver:
+        yield driver
+
     
 @pytest.mark.parametrize("job,page,result", [
     ("simple_save",         "pokedex_full", "list_pokemons"),
