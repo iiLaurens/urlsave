@@ -31,9 +31,9 @@ def driver():
     ("multipage_pokemons_scroll", "pokedex_full_scroll_load", "list_pokemons_details"),
 ])
 def test_eval(driver, job, page, result):
-    page = os.getcwd() + "\\tests\\pages\\" + page + ".html"
-    job =  os.getcwd() + "\\tests\\jobs\\" + job + ".txt"
-    result = os.getcwd() + "\\tests\\results\\" + result + ".txt"
+    page = os.path.join(os.getcwd(), "tests", "pages", page + ".html")
+    job =  os.path.join(os.getcwd(), "tests", "pages", job + ".txt")
+    result = os.path.join(os.getcwd(), "tests", "pages", result + ".txt")
     
     # Load our job
     with open(job) as f:
@@ -52,7 +52,7 @@ def test_eval(driver, job, page, result):
     assert outcome == result
     
 def create_test(job, job_file, page, result_file):
-    page = os.getcwd() + "\\tests\\pages\\" + page + ".html"
+    page = os.path.join(os.getcwd(), "tests", "pages", page + ".html")
     browser_args = get_driver_options()
     with Browser(**browser_args) as driver:
         # Pre-set the browsers webpage
@@ -60,8 +60,8 @@ def create_test(job, job_file, page, result_file):
         parser = Parser(job, driver = driver, keep_driver = True, test_mode = True)
         result = parser.parse()
     
-    job_file =  os.getcwd() + "\\tests\\jobs\\" + job_file + ".txt"
-    result_file = os.getcwd() + "\\tests\\results\\" + result_file + ".txt"
+    job_file =  os.path.join(os.getcwd(), "tests", "pages", job_file + ".txt")
+    result_file = os.path.join(os.getcwd(), "tests", "pages", result_file + ".txt")
     
     with open(job_file, 'w+') as f:
         f.write(job)
