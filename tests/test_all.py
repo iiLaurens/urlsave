@@ -9,7 +9,6 @@ import pytest
 import json
 import os
 from urlsave import Parser, Browser
-from selenium.webdriver.chrome.options import Options
 
 @pytest.fixture(scope='session')  # one server to rule'em all
 def driver():  
@@ -31,7 +30,6 @@ def driver():
     ("multipage_pokemons_scroll", "pokedex_full_scroll_load", "list_pokemons_details"),
 ])
 def test_eval(driver, job, page, result):
-    page = os.path.join(os.getcwd(), "tests", "pages", page + ".html")
     job =  os.path.join(os.getcwd(), "tests", "jobs", job + ".txt")
     result = os.path.join(os.getcwd(), "tests", "results", result + ".txt")
     
@@ -44,7 +42,7 @@ def test_eval(driver, job, page, result):
         result = json.loads(f.read())
     
     # Pre-set the browsers webpage
-    driver.get(page)
+    driver.get("https://iilaurens.github.io/urlsave/tests/pages/" + page + ".html")
     
     parser = Parser(job, driver = driver, keep_driver = True, test_mode = True)
     outcome = parser.parse()
@@ -52,11 +50,9 @@ def test_eval(driver, job, page, result):
     assert outcome == result
     
 def create_test(job, job_file, page, result_file):
-    page = os.path.join(os.getcwd(), "tests", "pages", page + ".html")
-    browser_args = get_driver_options()
-    with Browser(**browser_args) as driver:
+    with Browser() as driver:
         # Pre-set the browsers webpage
-        driver.get(page)
+        driver.get("https://iilaurens.github.io/urlsave/tests/pages/" + page + ".html")
         parser = Parser(job, driver = driver, keep_driver = True, test_mode = True)
         result = parser.parse()
     
