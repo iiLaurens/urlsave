@@ -5,16 +5,15 @@ Selenium using headless chrome test script
 This is a test script file.
 """
 
-from poyo import parse_string
+import yaml
 from lxml import html
 from time import sleep
-from functools import reduce, partial
 
 class Parser(object):
     def __init__(self, job, driver=None, html=None, keep_driver = False, test_mode = False):
         # If we have raw string, then transform it into a dictionary
         if type(job) == str:
-            job = parse_string(job)
+            job = yaml.load(job)
             
         # Store variables
         self.job = job

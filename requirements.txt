@@ -1,3 +1,4 @@
 lxml==4.2.1
 selenium==3.11.0
-poyo==0.4.1
+pyyaml==3.12
+python-telegram-bot==10.1.0

@@ -8,7 +8,8 @@ Created on Fri May 25 19:14:35 2018
 import pytest
 import json
 import os
-from urlsave import Parser, Browser
+from tempfile import TemporaryFile
+from urlsave import Parser, Browser, Storage
 
 @pytest.fixture(scope='session')  # one server to rule'em all
 def driver():  
@@ -29,7 +30,7 @@ def driver():
     ("multipage_pokemons_ajax", "pokedex_full_loading", "list_pokemons_details"),
     ("multipage_pokemons_scroll", "pokedex_full_scroll_load", "list_pokemons_details"),
 ])
-def test_eval(driver, job, page, result):
+def test_parser(driver, job, page, result):
     job =  os.path.join(os.getcwd(), "tests", "jobs", job + ".txt")
     result = os.path.join(os.getcwd(), "tests", "results", result + ".txt")
     
@@ -49,7 +50,28 @@ def test_eval(driver, job, page, result):
     
     assert outcome == result
     
-def create_test(job, job_file, page, result_file):
+def test_storage(tmpdir):
+    # Make sure we have a temporary sqlite database
+    db = os.path.join(tmpdir, "test.sqlite")
+    if os.path.exists(db):
+        os.remove(db)  
+    db = Storage(db)
+    
+    # Load something we can possibly store
+    src = os.path.join(os.getcwd(), "tests", "results", "list_pokemons_details.txt")
+    with open(src, 'r') as f:
+        lst = json.loads(f.read())
+    
+    db.update_db(lst[:100])
+    
+    db.update_db(lst[50:150])
+    
+    assert len(db.query("SELECT * FROM documents WHERE active=0")) == 50
+    assert len(db.query("SELECT * FROM documents WHERE new=1")) == 50
+    assert len(db.query("SELECT * FROM documents WHERE new=0 AND active=0")) == 50
+    
+    
+def create_parse_test(job, job_file, page, result_file):
     with Browser() as driver:
         # Pre-set the browsers webpage
         driver.get("https://iilaurens.github.io/urlsave/tests/pages/" + page + ".html")
