@@ -10,7 +10,7 @@ from lxml import html
 from time import sleep
 
 class Parser(object):
-    def __init__(self, job, driver=None, html=None, keep_driver = False,
+    def __init__(self, job, driver=None, keep_driver = False,
                  test_mode = False):
         # If we have raw string, then transform it into a dictionary
         if type(job) == str:
@@ -19,7 +19,6 @@ class Parser(object):
         # Store variables
         self.job = job
         self.driver = driver
-        self.html = html
         self.keep_driver = keep_driver
         self.storage = None
         
@@ -28,39 +27,39 @@ class Parser(object):
         elif driver and not self.job.get('Url') and not test_mode:
             raise Exception("No URL given in job config")
         
+    def start(self):
+        job = self.job.copy()
+        self.parse(job)
+    
         
-    def parse(self):
-        # Parse the URL. Either use a real webdriver (if available) to fetch
-        # html from an url or fall back on provided html
-        if self.driver and self.job.get('Url'):
-            self.driver.get(self.job['Url'])
+    def parse(self, job):
+        job = listify(job)
         
-        if self.driver:
-            self.html = self.driver.page_source
-            
-        if self.driver and self.job.get('Navigate'):
-            self.navigate(self.job['Navigate'])
-            
-        self.page = html.fromstring(self.html)
-        self.active_element = self.page
+        # Get first task of our scheduled job
+        task = job.pop(0, None)
         
-        # Parse list
-        if self.job.get("Multipage"):
-            self.storage = self.multipage(self.job['Multipage'])
-            
-        elif self.job.get("Save"):
-            self.storage = self.save(self.job['Save'])
+        try:
+            name, value = list(task.items())[0]
+            name = name.lower()
+        except:
+            raise Exception("Top level task must be a dict.")
         
-        if self.driver and not self.keep_driver:
-            self.driver.quit()
+        try:
+            getattr(self, name)(value)
+        except AttributeError:
+            raise SyntaxError(f"A task with name '{name}' does not exist.")
         
-        return self.storage
+        if len(job) > 0:
+            self.parse(job)        
+    
+    def url(self, value):
+        self.driver.get(value)
     
     
-    def navigate(self, jobs):
+    def navigate(self, value):
+        value = listify(value)
         # This function expects a list of dicts. Each dict corresponds to
         # some action that corresponds to navigating the page.
-        jobs = jobs.copy() # Prevent changes to original job by making copy
         
         # Navigation will always expect a list. Dicts do not allow repeated
         # keys and are tricky to organize in the correct order. If we only
@@ -259,36 +258,49 @@ class Parser(object):
                 results = dict(zip(keys, results))
                 
             return results
-
-    @staticmethod
-    def merge_results(results):
-        # This function takes saved objects from several pages and combines
-        # them into a single object.
         
-        if type(results[0]) == dict:
-            # Case: we have a saved object that was not grouped and in dict
-            # format. We should therefore combine all keys of the dicts, but
-            # also combine among shared keys. This is tricky, since
-            # the value of the dict can itself be a list, dict or scalar.
-            result = results[0]
-            for i in results[1:]:
-                for k in i.keys():
-                    if k not in result.keys():
-                        result[k] = i[k]
-                    else:
-                        result[k] = Parser.merge_results([result[k], i[k]])               
-        else:
-            # Case: we have a grouped object as a list object or scalar.
-            # We can simply merge the two lists since groups should be
-            # mutually exclusive.
- 
-            result = []
-            for i in results:
-                if type(i) != list:
-                    result.append(i)
-                else:
-                    for v in i:
-                        result.append(v) 
+        
+def listify(obj):
+    lst = []
+    if type(obj) == dict:
+        for k, v in obj.items():
+            lst.append({k: v})
+    if type(obj) == list:
+        lst = obj
+    elif type(obj) != list:
+        raise Exception("Parser did not receive a list or dictionary!")
+        
+    return lst
+
+
+def merge_results(results):
+    # This function takes saved objects from several pages and combines
+    # them into a single object.
     
-        return result
+    if type(results[0]) == dict:
+        # Case: we have a saved object that was not grouped and in dict
+        # format. We should therefore combine all keys of the dicts, but
+        # also combine among shared keys. This is tricky, since
+        # the value of the dict can itself be a list, dict or scalar.
+        result = results[0]
+        for i in results[1:]:
+            for k in i.keys():
+                if k not in result.keys():
+                    result[k] = i[k]
+                else:
+                    result[k] = Parser.merge_results([result[k], i[k]])               
+    else:
+        # Case: we have a grouped object as a list object or scalar.
+        # We can simply merge the two lists since groups should be
+        # mutually exclusive.
+ 
+        result = []
+        for i in results:
+            if type(i) != list:
+                result.append(i)
+            else:
+                for v in i:
+                    result.append(v) 
+
+    return result
             
