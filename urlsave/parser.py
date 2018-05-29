@@ -10,7 +10,8 @@ from lxml import html
 from time import sleep
 
 class Parser(object):
-    def __init__(self, job, driver=None, html=None, keep_driver = False, test_mode = False):
+    def __init__(self, job, driver=None, html=None, keep_driver = False,
+                 test_mode = False):
         # If we have raw string, then transform it into a dictionary
         if type(job) == str:
             job = yaml.load(job)
@@ -20,6 +21,7 @@ class Parser(object):
         self.driver = driver
         self.html = html
         self.keep_driver = keep_driver
+        self.storage = None
         
         if not driver and not html:
             raise Exception("No HTML provided and no webdriver found")
@@ -48,7 +50,6 @@ class Parser(object):
             
         elif self.job.get("Save"):
             self.storage = self.save(self.job['Save'])
-            
         
         if self.driver and not self.keep_driver:
             self.driver.quit()
@@ -57,21 +58,33 @@ class Parser(object):
     
     
     def navigate(self, jobs):
+        # This function expects a list of dicts. Each dict corresponds to
+        # some action that corresponds to navigating the page.
         jobs = jobs.copy() # Prevent changes to original job by making copy
         
+        # Navigation will always expect a list. Dicts do not allow repeated
+        # keys and are tricky to organize in the correct order. If we only
+        # have one dict, then put it in a list
         if type(jobs) != list:
             jobs = [jobs]
         
         for job in jobs:
-            if job["Action"] == "Click":
+            if "Wait" in job:
+                sleep(job["Wait"])
+                
+            elif "Scroll" in job:
+                if type(job["Scroll"]) == int:
+                    self.driver.execute_script(f"return window.scrollBy(0, {job['Scroll']});")
+                    
+            elif "Click" in job:
                 self.driver.implicitly_wait(job.get("Timeout", 1))
                 try:
-                    self.driver.find_element_by_xpath(job["Element"]).click()
+                    self.driver.find_element_by_xpath(job["Click"]).click()
                 except:
                     if not job.get("Optional", False):
-                        raise
-        
-        sleep(0.5)
+                        raise Exception("Couldn't find XPath needed to click")
+                
+                
         self.html = self.driver.page_source
         self.page = html.fromstring(self.html)
         self.active_element = self.page
@@ -195,6 +208,9 @@ class Parser(object):
     def save(self, job):
         if type(job) == str:
             return self.save_xpath(job)
+        
+        if type(job) == list:
+            return [self.save(x) for x in job]
         
         if type(job) == dict:
             job = job.copy() # Prevent changes to original job by making copy

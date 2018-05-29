@@ -1,0 +1,9 @@
+Url: https://ticketspy.nl
+Navigate:
+    - Wait: 3
+    - Scroll: 100
+    - Wait: 3
+    - Click: //div[@class='ts-dialog-close-button']/a
+Save:
+    Group by: //div[contains(@class, 'post-deal')]
+    Description: .//h3
