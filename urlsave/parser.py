@@ -8,6 +8,7 @@ This is a test script file.
 import yaml
 from lxml import html
 from time import sleep
+import re
 
 class Parser(object):
     def __init__(self, job, driver=None, keep_driver = False,
@@ -36,58 +37,47 @@ class Parser(object):
         job = listify(job)
         
         # Get first task of our scheduled job
-        task = job.pop(0, None)
-        
-        try:
-            name, value = list(task.items())[0]
-            name = name.lower()
-        except:
-            raise Exception("Top level task must be a dict.")
-        
-        try:
-            getattr(self, name)(value)
-        except AttributeError:
-            raise SyntaxError(f"A task with name '{name}' does not exist.")
-        
-        if len(job) > 0:
-            self.parse(job)        
+        for task in job:
+            try:
+                name, value = list(task.items())[0]
+                name = name.lower()
+            except:
+                raise Exception("Top level task must be a dict.")
+            
+            try:
+                getattr(self, name)(value)
+            except AttributeError:
+                raise SyntaxError(f"A task with name '{name}' does not exist.")
     
     def url(self, value):
         self.driver.get(value)
-    
-    
-    def navigate(self, value):
-        value = listify(value)
-        # This function expects a list of dicts. Each dict corresponds to
-        # some action that corresponds to navigating the page.
+        self.update()
         
-        # Navigation will always expect a list. Dicts do not allow repeated
-        # keys and are tricky to organize in the correct order. If we only
-        # have one dict, then put it in a list
-        if type(jobs) != list:
-            jobs = [jobs]
-        
-        for job in jobs:
-            if "Wait" in job:
-                sleep(job["Wait"])
-                
-            elif "Scroll" in job:
-                if type(job["Scroll"]) == int:
-                    self.driver.execute_script(f"return window.scrollBy(0, {job['Scroll']});")
-                    
-            elif "Click" in job:
-                self.driver.implicitly_wait(job.get("Timeout", 1))
-                try:
-                    self.driver.find_element_by_xpath(job["Click"]).click()
-                except:
-                    if not job.get("Optional", False):
-                        raise Exception("Couldn't find XPath needed to click")
-                
-                
+    def update(self):
         self.html = self.driver.page_source
         self.page = html.fromstring(self.html)
         self.active_element = self.page
+    
+    
+    def navigate(self, value):
+        navi = listify(value)
+        # This function expects a list of dicts, with each dict describing
+        # an action with possible parameters.
         
+        # Get first task of our first navigation action
+        for task in navi:   
+            try:
+                name, value = list(task.items())[0]
+                name = name.lower()
+            except:
+                raise Exception("Navigation action must be a dict.")
+            
+            if name.lower() == "click":
+                try:
+                    self.driver.find_element_by_xpath(value).click()
+                except:
+                    raise Exception("XPath did not lead to an element to click")
+                        
         
     def xpath(self, path):
         # Test validity of XPath
@@ -204,60 +194,33 @@ class Parser(object):
         return result
         
         
-    def save(self, job):
-        if type(job) == str:
-            return self.save_xpath(job)
-        
-        if type(job) == list:
-            return [self.save(x) for x in job]
-        
-        if type(job) == dict:
-            job = job.copy() # Prevent changes to original job by making copy
+    def save(self, save):
 
-            results = []
-            keys = []
+        if type(save) == str:
+            return self.save_xpath(save)
+        
+        if type(save) == list:
+            return [self.save(x) for x in save]
+        
+        if type(save) == dict:
+            dic = {k: self.save(v) for k, v in save.items()}
             
-            # Limit scope of XPath to certain elements if scope is given
-            # or else fall back to current active element
-            group_by = job.pop("Group by", ".")
-            elements = self.xpath(group_by)
-            for e in elements:
-                self.active_element = e
-                
-                result = {}
-                                   
-                if "Save" in job.keys():
-                    job = {key:job.get(key) for key in ["Keys", "Save"] if job.get(key)}
-
-                for key, value in job.items():
-                    result[key] = self.save(value)
-                    break_outer = True if result[key] == None else False
-                if break_outer: continue
+            for k in dic:
+                isKeysMatch = re.match("keys\((.*)\)", k)
+                if isKeysMatch:
+                    values = dic.pop(k)
+                    if type(values) != list:
+                        raise Exception(f"Value(s) belonging to {k} must be a list")
+                    keys = self.save_xpath(isKeysMatch[1])
+                    if len(keys) != len(values):
+                        raise Exception(f"Cannot zip keys and values of {k} if not same length")
                     
-                if "Keys" in job.keys():
-                    if group_by != ".":
-                        if type(result["Keys"])!=str:
-                            raise Exception("Keys XPath must return exactly one value per group")
-                        keys.append(result.pop("Keys"))
-                    else:
-                        if not job.get("Save"):
-                            raise Exception("'Keys' command requires 'Save' or 'Group by' command to match with")
-                        elif type(result["Keys"]) == list and len(result["Keys"]) != len(result["Save"]):
-                            raise Exception(f"Set returned by Save: {job['Save']} not same length as Keys: {job['Keys']}")
-                        keys = result["Keys"]
-                        results = result["Save"]
-                        break
-                            
-                if "Save" in job.keys():
-                    result = result["Save"]
+                    for i in range(len(keys)):
+                        dic[keys[i]] = values[i]
+            
+            return dic
                 
-                if len(result) > 0:
-                    results.append(result)
-
-            if len(keys) > 0:
-                results = dict(zip(keys, results))
                 
-            return results
         
         
 def listify(obj):
