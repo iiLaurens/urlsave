@@ -8,9 +8,10 @@ This is a test script file.
 import yaml
 from lxml import html
 from time import sleep
+import re
 
 class Parser(object):
-    def __init__(self, job, driver=None, html=None, keep_driver = False,
+    def __init__(self, job, driver=None, keep_driver = False,
                  test_mode = False):
         # If we have raw string, then transform it into a dictionary
         if type(job) == str:
@@ -19,90 +20,70 @@ class Parser(object):
         # Store variables
         self.job = job
         self.driver = driver
-        self.html = html
         self.keep_driver = keep_driver
         self.storage = None
         
-        if not driver and not html:
-            raise Exception("No HTML provided and no webdriver found")
-        elif driver and not self.job.get('Url') and not test_mode:
+        if test_mode:
+            self.update()
+        
+        if not self.job.get('Url') and not test_mode:
             raise Exception("No URL given in job config")
         
+    def start(self):
+        job = self.job.copy()        
+        self.parse(job)
+    
         
-    def parse(self):
-        # Parse the URL. Either use a real webdriver (if available) to fetch
-        # html from an url or fall back on provided html
-        if self.driver and self.job.get('Url'):
-            self.driver.get(self.job['Url'])
+    def parse(self, job):
+        job = listify(job)
         
-        if self.driver:
-            self.html = self.driver.page_source
+        # Get first task of our scheduled job
+        for task in job:
+            try:
+                name, value = list(task.items())[0]
+                name = name.lower()
+            except:
+                raise Exception("Top level task must be a dict.")
             
-        if self.driver and self.job.get('Navigate'):
-            self.navigate(self.job['Navigate'])
+            if name in ["save", "group", "multipage"]:
+                self.storage = getattr(self, name)(value)
+                continue
             
-        self.page = html.fromstring(self.html)
-        self.active_element = self.page
-        
-        # Parse list
-        if self.job.get("Multipage"):
-            self.storage = self.multipage(self.job['Multipage'])
-            
-        elif self.job.get("Save"):
-            self.storage = self.save(self.job['Save'])
-        
-        if self.driver and not self.keep_driver:
-            self.driver.quit()
-        
-        return self.storage
+            try:
+                getattr(self, name)(value)
+            except AttributeError:
+                raise SyntaxError(f"A task with name '{name}' does not exist.")
     
     
-    def navigate(self, jobs):
-        # This function expects a list of dicts. Each dict corresponds to
-        # some action that corresponds to navigating the page.
-        jobs = jobs.copy() # Prevent changes to original job by making copy
+    def url(self, value):
+        self.driver.get(value)
+        self.update()
         
-        # Navigation will always expect a list. Dicts do not allow repeated
-        # keys and are tricky to organize in the correct order. If we only
-        # have one dict, then put it in a list
-        if type(jobs) != list:
-            jobs = [jobs]
-        
-        for job in jobs:
-            if "Wait" in job:
-                sleep(job["Wait"])
-                
-            elif "Scroll" in job:
-                if type(job["Scroll"]) == int:
-                    self.driver.execute_script(f"return window.scrollBy(0, {job['Scroll']});")
-                    
-            elif "Click" in job:
-                self.driver.implicitly_wait(job.get("Timeout", 1))
-                try:
-                    self.driver.find_element_by_xpath(job["Click"]).click()
-                except:
-                    if not job.get("Optional", False):
-                        raise Exception("Couldn't find XPath needed to click")
-                
-                
+    def update(self):
         self.html = self.driver.page_source
-        self.page = html.fromstring(self.html)
+        self.page = html.document_fromstring(self.html)
         self.active_element = self.page
-        
-        
-    def xpath(self, path):
-        # Test validity of XPath
-        path = path.strip()
-        slash_pos = path.find("/")
-        if slash_pos == -1 and path != ".":
-            raise Exception(path + 'is not a valid XPath: requires a backslash')
-            
-        # Add a reference to the active element in scope with a leading dot
-        if path[max(slash_pos - 1, 0)] != ".":
-            path = path[:slash_pos] + "." + path[slash_pos:]
-        
-        return self.active_element.xpath(path)
     
+    
+    def navigate(self, value):
+        navi = listify(value)
+        # This function expects a list of dicts, with each dict describing
+        # an action with possible parameters.
+        
+        # Get first task of our first navigation action
+        for task in navi:   
+            try:
+                name, value = list(task.items())[0]
+                name = name.lower().replace(" ", "_")
+            except:
+                raise Exception("Navigation action must be a dict.")
+            
+            if name.lower() == "click":
+                try:
+                    self.driver.find_element_by_xpath(value).click()
+                except:
+                    raise Exception("XPath did not lead to an element to click")
+
     
     def multipage(self, job):
         max_pages = job.get("Max pages", 10)
@@ -110,6 +91,7 @@ class Parser(object):
         next_path = job.get("Next")
         scroll_load = job.get("Scrolling", False)
         cumulative = job.get("Cumulative", False)
+        group = ("Group" in job)
         
         if not next_path and not scroll_load:
             raise Exception("Multipage requires an XPath for next button")
@@ -126,7 +108,8 @@ class Parser(object):
             # If each page contains new items only, then we have to accumulate
             # the results manually.
             if not cumulative:
-                results.append(self.save(self.job["Save"]))
+                result = self.group(job["Group"]) if group else self.save(job["Save"])
+                results.append(result)
             
             if not scroll_load:
                 # Try to find the next button in source, or stop if not found
@@ -154,32 +137,27 @@ class Parser(object):
             
             # Set next page
             if not cumulative:
-                self.html = self.driver.page_source
-                self.page = html.fromstring(self.html)
-                self.active_element = self.page
+                self.update()
         
         if not cumulative:
-            result = Parser.merge_results(results)
+            result = merge_results(results)
         else:
-            self.html = self.driver.page_source
-            self.page = html.fromstring(self.html)
-        
-            self.active_element = self.page.body
-        
-            result = self.save(self.job['Save'])
+            self.update()
+            result = self.group(job["Group"]) if group else self.save(job["Save"])
         
         return result
-            
-
+    
+                            
+    def xpath(self, path):
+        # Test validity of XPath       
+        return self.active_element.xpath(path)
+    
+        
     def save_xpath(self, job):
         # Seperate options from XPath string
         options = [("-"+e).split(" ") for e in job.split(" -")[1:]]
         options = {x[0]:x[1:] for x in options}
         job = job.split(" -")[0]
-        
-        #
-        if len(set(["--text", "-t"]) & set(options.keys())) > 0:
-            return job
         
         # Get results
         result = self.xpath(job)
@@ -192,103 +170,118 @@ class Parser(object):
         result = [e.text_content().strip() if type(e) == html.HtmlElement
                   else e.strip() for e in result]
         
-        # Keep only unique values if the unique option is set
-        if len(set(["--unique", "-u"]) & set(options.keys())) > 0:
-            seen = set()
-            result = [x for x in result if not (x in seen or seen.add(x))]
-        
-        # If the result is a single value and not a list, then collapse
-        # the list, unless this behaviour is turned off in the options
-        if len(set(["--force-list", "-l"]) & set(options.keys())) == 0:
+        # If the single option is given, then collapse the list
+        if len(set(["--keep-list", "-l"]) & set(options.keys())) == 0:
             result = result if len(result) != 1 else result[0]
-            
+        
         return result
         
-        
-    def save(self, job):
-        if type(job) == str:
-            return self.save_xpath(job)
-        
-        if type(job) == list:
-            return [self.save(x) for x in job]
-        
-        if type(job) == dict:
-            job = job.copy() # Prevent changes to original job by making copy
-
-            results = []
-            keys = []
-            
-            # Limit scope of XPath to certain elements if scope is given
-            # or else fall back to current active element
-            group_by = job.pop("Group by", ".")
-            elements = self.xpath(group_by)
-            for e in elements:
-                self.active_element = e
-                
-                result = {}
-                                   
-                if "Save" in job.keys():
-                    job = {key:job.get(key) for key in ["Keys", "Save"] if job.get(key)}
-
-                for key, value in job.items():
-                    result[key] = self.save(value)
-                    break_outer = True if result[key] == None else False
-                if break_outer: continue
-                    
-                if "Keys" in job.keys():
-                    if group_by != ".":
-                        if type(result["Keys"])!=str:
-                            raise Exception("Keys XPath must return exactly one value per group")
-                        keys.append(result.pop("Keys"))
-                    else:
-                        if not job.get("Save"):
-                            raise Exception("'Keys' command requires 'Save' or 'Group by' command to match with")
-                        elif type(result["Keys"]) == list and len(result["Keys"]) != len(result["Save"]):
-                            raise Exception(f"Set returned by Save: {job['Save']} not same length as Keys: {job['Keys']}")
-                        keys = result["Keys"]
-                        results = result["Save"]
-                        break
-                            
-                if "Save" in job.keys():
-                    result = result["Save"]
-                
-                if len(result) > 0:
-                    results.append(result)
-
-            if len(keys) > 0:
-                results = dict(zip(keys, results))
-                
-            return results
-
-    @staticmethod
-    def merge_results(results):
-        # This function takes saved objects from several pages and combines
-        # them into a single object.
-        
-        if type(results[0]) == dict:
-            # Case: we have a saved object that was not grouped and in dict
-            # format. We should therefore combine all keys of the dicts, but
-            # also combine among shared keys. This is tricky, since
-            # the value of the dict can itself be a list, dict or scalar.
-            result = results[0]
-            for i in results[1:]:
-                for k in i.keys():
-                    if k not in result.keys():
-                        result[k] = i[k]
-                    else:
-                        result[k] = Parser.merge_results([result[k], i[k]])               
-        else:
-            # Case: we have a grouped object as a list object or scalar.
-            # We can simply merge the two lists since groups should be
-            # mutually exclusive.
- 
-            result = []
-            for i in results:
-                if type(i) != list:
-                    result.append(i)
-                else:
-                    for v in i:
-                        result.append(v) 
     
-        return result
+    def save(self, save):
+        if type(save) == str:
+            return self.save_xpath(save)
+        
+        if type(save) == list:
+            return [self.save(x) for x in save]
+        
+        if type(save) == dict:
+            save = save.copy()
+            dic = {k: self.save(v) for k, v in save.items()}
             
+            for k in dic.copy():
+                keyPath = re.match("Keys\((.*)\)", k)
+                if keyPath:
+                    values = dic.pop(k)
+                    keys = self.save_xpath(keyPath[1])
+                    dic = zip_keys(dic, keys, values)
+            
+            return dic
+    
+    
+    
+    def group(self, job):
+        job = job.copy()
+        by = job.pop("By", None)
+        save = job.pop("Save", None)
+        
+        if not by or not save:
+            raise Exception("Group statements needs 'By' and 'Save' clause")
+        
+        lst = []
+        keys = []
+        elements = self.xpath(by)
+        for e in elements:
+            self.active_element = e
+            lst.append(self.save(save))
+            if "Keys" in job:
+                keys.append(self.save_xpath(job["Keys"]))
+                
+        if len(keys) > 0:
+            if len(keys) != len(lst):
+                raise Exception("Cannot create dictionary in group because not enough keys found")
+            return {k:v for k,v in zip(keys, lst)}
+        
+        return lst
+    
+        
+def listify(obj):
+    lst = []
+    if type(obj) == dict:
+        for k, v in obj.items():
+            lst.append({k: v})
+    elif type(obj) == list:
+        lst = obj
+    elif type(obj) == str:
+        lst = [obj]
+    elif type(obj) != list:
+        raise Exception("Parser did not receive a list or dictionary!")
+        
+    return lst
+
+
+def merge_results(results):
+    # This function takes saved objects from several pages and combines
+    # them into a single object.
+    
+    if type(results[0]) == dict:
+        # Case: we have a saved object that was not grouped and in dict
+        # format. We should therefore combine all keys of the dicts, but
+        # also combine among shared keys. This is tricky, since
+        # the value of the dict can itself be a list, dict or scalar.
+        result = results[0]
+        for i in results[1:]:
+            for k in i.keys():
+                if k not in result.keys():
+                    result[k] = i[k]
+                else:
+                    result[k] = merge_results([result[k], i[k]])               
+    else:
+        # Case: we have a grouped object as a list object or scalar.
+        # We can simply merge the two lists since groups should be
+        # mutually exclusive.
+ 
+        result = []
+        for i in results:
+            if type(i) != list:
+                result.append(i)
+            else:
+                for v in i:
+                    result.append(v) 
+
+    return result
+
+def zip_keys(dic, keys, values):
+    """
+    Merge keys and lists and add to original dictionary. Keys are defined
+    by an XPath string.
+    """
+    
+    if type(values) != list:
+        raise Exception(f"Value(s) belonging to {k} must be a list")
+    if len(keys) != len(values):
+        raise Exception(f"Cannot zip keys and values of {k} if not same length")
+    
+    for i in range(len(keys)):
+        dic[keys[i]] = values[i]
+        
+    return dic
