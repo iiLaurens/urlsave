@@ -20,7 +20,6 @@ def driver():
 @pytest.mark.parametrize("job,page,result", [
     ("simple_save",         "pokedex_full", "list_pokemons"),
     ("simple_save_details", "pokedex_full", "list_pokemons_details"),
-    ("unique_abilities", "pokedex_full", "list_abilities"),
     ("pokemon_keys_to_abilities", "pokedex_full", "dict_pokemons_abilities"),
     ("pokemon_keys_to_details", "pokedex_full", "dict_pokemons_details"),
     ("pokemon_keys_to_numbers_no_grouping", "pokedex_full", "dict_pokemons_numbers"),
@@ -46,9 +45,9 @@ def test_parser(driver, job, page, result):
     driver.get("https://iilaurens.github.io/urlsave/tests/pages/" + page + ".html")
     
     parser = Parser(job, driver = driver, keep_driver = True, test_mode = True)
-    outcome = parser.parse()
+    parser.start()
     
-    assert outcome == result
+    assert parser.storage == result
     
 def test_storage(tmpdir):
     # Make sure we have a temporary sqlite database
@@ -76,7 +75,8 @@ def create_parse_test(job, job_file, page, result_file):
         # Pre-set the browsers webpage
         driver.get("https://iilaurens.github.io/urlsave/tests/pages/" + page + ".html")
         parser = Parser(job, driver = driver, keep_driver = True, test_mode = True)
-        result = parser.parse()
+        parser.start()
+        result = parser.storage
     
     job_file =  os.path.join(os.getcwd(), "tests", "jobs", job_file + ".txt")
     result_file = os.path.join(os.getcwd(), "tests", "results", result_file + ".txt")

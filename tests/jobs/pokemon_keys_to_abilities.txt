@@ -1,4 +1,4 @@
-Save:
-    Group by: //div[@class="pokemon-info"]
-    Keys: /h5
-    Save: //div[@class="abilities"]/span -l
+Group:
+    By: //div[@class="pokemon-info"]
+    Keys: ./h5
+    Save: .//div[@class="abilities"]/span -l
