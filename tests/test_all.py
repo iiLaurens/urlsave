@@ -11,7 +11,7 @@ import os
 from tempfile import TemporaryFile
 from urlsave import Parser, Browser, Storage
 
-@pytest.fixture(scope='session')  # one server to rule'em all
+@pytest.fixture(scope='session')  # one server to rule'em all 
 def driver():  
     with Browser() as driver:
         yield driver

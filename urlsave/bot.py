@@ -27,14 +27,11 @@ class Bot(object):
         self.dp.add_handler(CommandHandler("start", self.start))
         self.dp.add_handler(CommandHandler("stop",  self.stop))
         
+        self.start_bot()
+        
     def start_bot(self):
         # Start the Bot
         self.updater.start_polling()
-    
-        # Run the bot until you press Ctrl-C or the process receives SIGINT,
-        # SIGTERM or SIGABRT. This should be used most of the time, since
-        # start_polling() is non-blocking and will stop the bot gracefully.
-        #self.updater.idle()
         
         
     def start(self, bot, update):
@@ -46,6 +43,7 @@ class Bot(object):
         
         self.save_config()
     
+    
     def stop(self, bot, update):
         """Send a message when the command /start is issued."""
         chat_id = update.message.chat_id
@@ -54,14 +52,15 @@ class Bot(object):
         update.message.reply_text('Stopped!')
         
         self.save_config()
+    
         
     def save_config(self):
         with open(self.bot_config_file, 'w+') as f:
             f.write(yaml.dump({'token': self.token,
                                'chat_ids': list(self.chat_ids)}))
     
+    
     def send(self, msg):
         for chat_id in self.chat_ids:
             self.updater.bot.send_message(chat_id=chat_id,
-                                          text=msg, 
-                                          parse_mode="Markdown")
+                                          text=msg)
