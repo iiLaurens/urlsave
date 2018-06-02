@@ -6,6 +6,9 @@ __pycache__/
 # Telegram stored secrets
 *.bot
 
+# sqlite database
+*.sqlite
+
 # C extensions
 *.so
 

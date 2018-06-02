@@ -24,6 +24,7 @@ def update(bot):
     
     for i in new:
         bot.send(i)
+        time.sleep(3.1)
 
 
         
