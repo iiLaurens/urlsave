@@ -63,4 +63,5 @@ class Bot(object):
     def send(self, msg):
         for chat_id in self.chat_ids:
             self.updater.bot.send_message(chat_id=chat_id,
-                                          text=msg)
+                                          text=msg,
+                                          parse_mode='HTML')

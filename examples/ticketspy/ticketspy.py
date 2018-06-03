@@ -1,12 +1,11 @@
 import os
 from urlsave import Parser, Browser, Storage, Bot
 import json
-import yaml
 import time
 import schedule
 import logging
 
-path = "D:\\Programming\\Python\\urlsave\\examples\\ticketspy"
+path = os.path.join(".", "examples", "ticketspy")
 
 logging.basicConfig(filename=os.path.join(path, "ticketspy.log"))
 
@@ -20,17 +19,17 @@ def update(bot):
         
     with Storage(os.path.join(path, "ticketspy.sqlite")) as db:
         db.update_db(p.storage)
-        new = [yaml.dump(json.loads(x), allow_unicode=True).replace("\n...\n", "") for x in db.get_new()]
+        new = [json.loads(x) for x in db.get_new()]
     
     for i in new:
-        bot.send(i)
+        bot.send(f"<a href='{i['url']}'>{i['text']}</a>")
         time.sleep(3.1)
 
 
         
 def main():
     bot = Bot(os.path.join(path, "ticketspy.bot"))
-    schedule.every(1).minutes.do(update, bot)
+    schedule.every(5).minutes.do(update, bot)
     
     while True:
         try:

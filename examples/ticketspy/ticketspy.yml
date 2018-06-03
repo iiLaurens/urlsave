@@ -1,4 +1,6 @@
 Url: https://ticketspy.nl
 Group:
     By: //section[not(./h2/text()="TicketSpy Tips")]//div[contains(@class, 'post-deal')]
-    Save: .//h3
+    Save:
+        text: .//h3
+        url: .//a[contains(@class, "meer")]/@href
