@@ -45,25 +45,42 @@ class Parser(object):
             except:
                 raise Exception("Top level task must be a dict.")
             
+            
             if name in ["save", "group", "multipage"]:
                 self.storage = getattr(self, name)(value)
                 continue
             
             try:
+                print(name)
                 getattr(self, name)(value)
             except AttributeError:
-                raise SyntaxError(f"A task with name '{name}' does not exist.")
+                raise AttributeError(f"A task with name '{name}' does not exist.")
     
     
-    def url(self, value):
-        self.driver.get(value)
-        self.update()
+    def test(self, job):
+        name, value = list(job.items())[0]
+        name = name.lower()
+        results = getattr(self, name)(value)
+        self.test_recursive(results)
+    
+    def test_recursive(self, results, path = "$"):
+        print(results)
+        # Traverse our result object recursively and find any empty list/dict
+        if results == None:
+            if path == "$":
+                parent = "root"
+            elif path[-1] == "]":
+                parent = "list"
+            else:
+                parent = "dict"
+            raise XPathException(f"Testing of XPath resulted in empty {parent}: {path}")
+        elif type(results) == list:
+            for i in range(len(results)):
+                self.test_recursive(results[i], path + f"[{i}]")
+        elif type(results) == dict:
+            for i in results:
+                self.test_recursive(results[i], path + f".{i}")   
         
-    def update(self):
-        self.html = self.driver.page_source
-        self.page = html.document_fromstring(self.html)
-        self.active_element = self.page
-    
     
     def navigate(self, value):
         navi = listify(value)
@@ -170,6 +187,9 @@ class Parser(object):
         result = [e.text_content().strip() if type(e) == html.HtmlElement
                   else e.strip() for e in result]
         
+        if len(result) == 0:
+            return None
+        
         # If the single option is given, then collapse the list
         if len(set(["--keep-list", "-l"]) & set(options.keys())) == 0:
             result = result if len(result) != 1 else result[0]
@@ -196,9 +216,7 @@ class Parser(object):
                     dic = zip_keys(dic, keys, values)
             
             return dic
-    
-    
-    
+        
     def group(self, job):
         job = job.copy()
         by = job.pop("By", None)
@@ -210,6 +228,9 @@ class Parser(object):
         lst = []
         keys = []
         elements = self.xpath(by)
+        if len(elements) == 0:
+            return None
+        
         for e in elements:
             self.active_element = e
             lst.append(self.save(save))
@@ -219,9 +240,22 @@ class Parser(object):
         if len(keys) > 0:
             if len(keys) != len(lst):
                 raise Exception("Cannot create dictionary in group because not enough keys found")
-            return {k:v for k,v in zip(keys, lst)}
+            dic = {}
+            return zip_keys(dic,keys, lst)
         
         return lst
+    
+    def url(self, value):
+        self.driver.get(value)
+        self.update()
+        
+        
+    def update(self):
+        self.html = self.driver.page_source
+        self.page = html.document_fromstring(self.html)
+        self.active_element = self.page
+    
+    
     
         
 def listify(obj):
@@ -275,13 +309,19 @@ def zip_keys(dic, keys, values):
     Merge keys and lists and add to original dictionary. Keys are defined
     by an XPath string.
     """
-    
+    if keys == None or values == None:
+        raise Exception("Keys and/or values appear to be missing when zipping!")
     if type(values) != list:
-        raise Exception(f"Value(s) belonging to {k} must be a list")
+        raise Exception(f"Value(s) belonging to {keys} must be a list")
     if len(keys) != len(values):
-        raise Exception(f"Cannot zip keys and values of {k} if not same length")
+        raise Exception(f"Cannot zip keys and values of {keys} if not same length")
     
     for i in range(len(keys)):
         dic[keys[i]] = values[i]
         
     return dic
+
+
+
+class XPathException(Exception):
+    pass

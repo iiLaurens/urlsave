@@ -10,6 +10,7 @@ import json
 import os
 from tempfile import TemporaryFile
 from urlsave import Parser, Browser, Storage
+from urlsave.parser import XPathException
 
 @pytest.fixture(scope='session')  # one server to rule'em all 
 def driver():  
@@ -69,6 +70,18 @@ def test_storage(tmpdir):
     assert len(db.query("SELECT * FROM documents WHERE new=1")) == 50
     assert len(db.query("SELECT * FROM documents WHERE new=0 AND active=0")) == 50
     
+@pytest.mark.parametrize("job", ["test_function_1", "test_function_2", "test_function_3"])
+def test_tester(driver, job):
+    driver.get("https://iilaurens.github.io/urlsave/tests/pages/pokemon_full.html")
+    
+    job =  os.path.join(os.getcwd(), "tests", "jobs", job + ".txt")
+    with open(job) as f:
+        job = f.read()
+    
+    parser = Parser(job, driver = driver, keep_driver = True, test_mode = True)
+
+    with pytest.raises(XPathException) as e_info:
+        parser.start()
     
 def create_parse_test(job, job_file, page, result_file):
     with Browser() as driver:

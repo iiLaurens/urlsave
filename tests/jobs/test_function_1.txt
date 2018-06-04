@@ -1,0 +1,6 @@
+Test:
+    Group:
+        By: //div[@class="pokemon-info"]
+        Save:
+          - .//div[@class="abilities"]/span
+          - .//fake/tag
