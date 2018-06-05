@@ -30,8 +30,6 @@ def main():
     bot = Bot(os.path.join(path, "ticketspy.bot"))
     schedule.every(5).minutes.do(update, bot)
     
-    update(bot)
-    
     while True:
         try:
             time.sleep(5)
