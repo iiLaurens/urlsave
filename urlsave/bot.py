@@ -6,6 +6,7 @@ This is a test script file.
 """
 
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
+from telegram.ext import messagequeue as mq
 import yaml
 
 class Bot(object):
@@ -19,8 +20,11 @@ class Bot(object):
         self.token = bot_config['token']
         self.chat_ids = set(bot_config.get("chat_ids", []))
 
+        # Start message queue
+        self._is_messages_queued_default = True
+        self._msg_queue = mq.MessageQueue(all_burst_limit=3, all_time_limit_ms=3000)
+        
         self.updater = Updater(self.token)
-
         self.dp = self.updater.dispatcher
 
         # on different commands - answer in Telegram
@@ -59,9 +63,25 @@ class Bot(object):
             f.write(yaml.dump({'token': self.token,
                                'chat_ids': list(self.chat_ids)}))
     
+    @mq.queuedmessage
+    def send_queue(self, *args, **kwargs):
+        return self.updater.bot.send_message(*args, **kwargs)
+    
     
     def send(self, msg):
         for chat_id in self.chat_ids:
-            self.updater.bot.send_message(chat_id=chat_id,
-                                          text=msg,
-                                          parse_mode='HTML')
+            isgroup = True if chat_id < 0 else False
+            self.send_queue(chat_id=chat_id,
+                            text=msg,
+                            parse_mode='HTML',
+                            isgroup = isgroup)
+                                          
+    def __del__(self):
+        try:
+            self._msg_queue.stop()
+        except:
+            pass
+        try:
+            self.updater.stop()
+        except:
+            pass

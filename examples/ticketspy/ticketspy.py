@@ -23,7 +23,6 @@ def update(bot):
     
     for i in new:
         bot.send(f"<a href='{i['url']}'>{i['text']}</a>")
-        time.sleep(3.1)
 
 
         
@@ -31,13 +30,14 @@ def main():
     bot = Bot(os.path.join(path, "ticketspy.bot"))
     schedule.every(5).minutes.do(update, bot)
     
+    update(bot)
+    
     while True:
         try:
             time.sleep(5)
             schedule.run_pending()
         except (KeyboardInterrupt, SystemExit):
-            bot.updater.stop()
-            raise
+            os._exit(1)
         except:
             logging.exception(f"{Storage.make_timestamp()}: An error occured", exc_info=True)
 		
