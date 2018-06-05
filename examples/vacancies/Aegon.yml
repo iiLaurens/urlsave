@@ -6,10 +6,19 @@ Test:
         Next button: //li[contains(@class, "pagination__item--next")]/a
 Multipage:
     Next: //li[contains(@class, "pagination__item--next")]/a
+    Max pages: 30
     Group:
         By: >
             //div[contains(@class,"vacancy-items__item") and not(re:match(.//a, "control", "i") or
-                                                                 re:match(.//a, "test", "i"))]
+                                                                 re:match(.//a, "test", "i") or
+                                                                 re:match(.//a, "account(ing|ant)", "i") or
+                                                                 re:match(.//a, "scrum", "i") or
+                                                                 re:match(.//a, "sas", "i") or
+                                                                 re:match(.//a, "database", "i") or
+                                                                 re:match(.//a, "senior", "i") or
+                                                                 re:match(.//a, "java", "i") or
+                                                                 re:match(.//a, "agile", "i") or
+                                                                 re:match(.//a, "security", "i"))]
         Save:
             Job: .//a
             Company: Aegon --text

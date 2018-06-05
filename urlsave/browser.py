@@ -22,6 +22,7 @@ class Browser(WebDriver):
         if 'chrome_options' not in kwargs:
             chrome_options = Options()
             chrome_options.add_argument("--disable-infobars")
+            chrome_options.add_argument("--window-size=1920,1080")
             if kwargs.pop('headless', True):
                 chrome_options.add_argument("--headless")
             
