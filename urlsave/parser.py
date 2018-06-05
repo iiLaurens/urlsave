@@ -9,6 +9,7 @@ import yaml
 from lxml import html
 from time import sleep
 import re
+from urllib.parse import urljoin, urlparse
 
 class Parser(object):
     def __init__(self, job, driver=None, keep_driver = False,
@@ -29,32 +30,10 @@ class Parser(object):
         if not self.job.get('Url') and not test_mode:
             raise Exception("No URL given in job config")
         
+        
     def start(self):
         job = self.job.copy()        
         self.parse(job)
-    
-        
-    def parse(self, job):
-        job = listify(job)
-        
-        # Get first task of our scheduled job
-        for task in job:
-            try:
-                name, value = list(task.items())[0]
-                name = name.lower()
-            except:
-                raise Exception("Top level task must be a dict.")
-            
-            
-            if name in ["save", "group", "multipage"]:
-                self.storage = getattr(self, name)(value)
-                continue
-            
-            try:
-                print(name)
-                getattr(self, name)(value)
-            except AttributeError:
-                raise AttributeError(f"A task with name '{name}' does not exist.")
     
     
     def test(self, job):
@@ -63,8 +42,8 @@ class Parser(object):
         results = getattr(self, name)(value)
         self.test_recursive(results)
     
+    
     def test_recursive(self, results, path = "$"):
-        print(results)
         # Traverse our result object recursively and find any empty list/dict
         if results == None:
             if path == "$":
@@ -166,15 +145,21 @@ class Parser(object):
     
                             
     def xpath(self, path):
-        # Test validity of XPath       
-        return self.active_element.xpath(path)
+        # Test validity of XPath
+        NSregexp = "http://exslt.org/regular-expressions"
+        return self.active_element.xpath(path, namespaces={"re": NSregexp})
     
         
     def save_xpath(self, job):
-        # Seperate options from XPath string
-        options = [("-"+e).split(" ") for e in job.split(" -")[1:]]
-        options = {x[0]:x[1:] for x in options}
-        job = job.split(" -")[0]
+        # Strip trailing or leading whitespace from
+        job = job.strip()
+        
+        # Seperate options/arguments from XPath string
+        options = ["--"+x for x in job.split(" --")[1:]]
+        job = job.split(" --")[0]
+        
+        if '--text' in options:
+            return job
         
         # Get results
         result = self.xpath(job)
@@ -190,8 +175,11 @@ class Parser(object):
         if len(result) == 0:
             return None
         
+        if '--url' in options:
+            result = make_absolute_url(self.driver.current_url, result)
+        
         # If the single option is given, then collapse the list
-        if len(set(["--keep-list", "-l"]) & set(options.keys())) == 0:
+        if not '--keep-list' in options:
             result = result if len(result) != 1 else result[0]
         
         return result
@@ -254,6 +242,27 @@ class Parser(object):
         self.html = self.driver.page_source
         self.page = html.document_fromstring(self.html)
         self.active_element = self.page
+        
+    def parse(self, job):
+        job = listify(job)
+        
+        # Get first task of our scheduled job
+        for task in job:
+            try:
+                name, value = list(task.items())[0]
+                name = name.lower()
+            except:
+                raise Exception("Top level task must be a dict.")
+            
+            
+            if name in ["save", "group", "multipage"]:
+                self.storage = getattr(self, name)(value)
+                continue
+            
+            try:
+                getattr(self, name)(value)
+            except AttributeError:
+                raise AttributeError(f"A task with name '{name}' does not exist.")
     
     
     
@@ -321,7 +330,12 @@ def zip_keys(dic, keys, values):
         
     return dic
 
-
+def make_absolute_url(current, hrefs):
+    new = hrefs.copy()
+    for idx, href in enumerate(hrefs):
+        if not bool(urlparse(href).netloc):
+            new[idx] = urljoin(current, href)
+    return new
 
 class XPathException(Exception):
     pass

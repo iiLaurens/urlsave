@@ -1,9 +1,17 @@
 Url: https://careers.aegon.com/en/vacancies/?query=&Cities=Cities-The-Hague&JobFamily=JobFamily-Asset-Management&JobFamily=JobFamily-Finance&JobFamily=JobFamily-Information-Technology&JobFamily=JobFamily-Investments
+Test:
+    Save:
+        Titles: //div[contains(@class,"vacancy-items__item")]//a
+        Divisions: //div[contains(@class,"vacancy-items__item")]//svg[1]/title
+        Next button: //li[contains(@class, "pagination__item--next")]/a
 Multipage:
     Next: //li[contains(@class, "pagination__item--next")]/a
-    Max pages: 5
-    Save:
-        Group by: //div[@class="vacancy-items__item"]
-        Title: //a
-        Company: Aegon --text
-        Division: //svg[1]/title -f [aA]sset [mM]anagement
+    Group:
+        By: >
+            //div[contains(@class,"vacancy-items__item") and not(re:match(.//a, "control", "i") or
+                                                                 re:match(.//a, "test", "i"))]
+        Save:
+            Job: .//a
+            Company: Aegon --text
+            Division: .//svg[1]/title
+            Url: .//a/@href --url

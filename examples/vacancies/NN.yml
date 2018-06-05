@@ -1,0 +1,20 @@
+Url: https://nn-careers.com/nl/jobs/?filter-searchphrase=&filter-company-departments%5B%5D=change-it&filter-company-departments%5B%5D=data-analytics&filter-company-departments%5B%5D=finance&filter-company-departments%5B%5D=investment-asset-management&filter-city%5B%5D=rotterdam&filter-city%5B%5D=the-hague&filter-businessunit%5B%5D=nn-group&filter-businessunit%5B%5D=nn-insurance-international&filter-businessunit%5B%5D=nn-investment-partners&filter-businessunit%5B%5D=nationale-nederlanden&filter-experience-level%5B%5D=experienced&filter-experience-level%5B%5D=graduates
+Multipage:
+    Next: //li[@class='nextp']/a
+    Group:
+        By: >
+            //article[not(re:match(.//h2/a, "control", "i") or
+                          re:match(.//h2/a, "test", "i") or
+                          re:match(.//h2/a, "account(ing|ant)", "i") or
+                          re:match(.//h2/a, "scrum", "i") or
+                          re:match(.//h2/a, "sas", "i") or
+                          re:match(.//h2/a, "database", "i") or
+                          re:match(.//h2/a, "senior", "i") or
+                          re:match(.//h2/a, "java", "i") or
+                          re:match(.//h2/a, "agile", "i") or
+                          re:match(.//h2/a, "security", "i"))]
+        Save:
+            Job: .//h2/a
+            Company: NN --text
+            Division: .//li[@class="company"]
+            Url: .//h2/a/@href --url

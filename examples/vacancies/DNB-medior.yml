@@ -1,6 +1,11 @@
 Url: https://www.dnb.nl/werken-bij/vacatures/index.jsp?werkervaring=medior&opleiding=WO
-Save:
-    Group by: //ul[@class="link-list"]//a
-    Title: /@title
-    Company: DNB --text
-    experience: Medior --text
+Test:
+    Save: 
+        Jobs: //ul[@class="link-list"]//a
+Group:
+    By: //ul[@class="link-list"]//a
+    Save:
+        Job: ./@title
+        Company: DNB --text
+        Division: Medior --text
+        Url: ./@href --url
