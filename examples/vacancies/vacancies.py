@@ -21,10 +21,10 @@ def loop_files(bot, update=None):
     with Browser() as driver:
         for file in files:
             try:
-                update(file, bot, driver)
+                update_website(file, bot, driver)
             except:
                 logging.exception(f"An exception occured parsing file {file}:", exc_info=True)
-                msg = f'<i>Error parsing {file} ({Storage.make_timestamp()})</i>'
+                msg = f'Error parsing {file} ({Storage.make_timestamp()})'
                 if update:
                     update.message.reply_text(msg)
                 else:
@@ -32,7 +32,7 @@ def loop_files(bot, update=None):
 
                 
     
-def update(file, bot, driver):
+def update_website(file, bot, driver):
     with open(os.path.join(path, file)) as f:
         job = f.read()
     
@@ -47,14 +47,16 @@ def update(file, bot, driver):
         division = f' ({i["Division"]})' if i.get("Division") else ''
         bot.send(f"{i['Company'] + division}:\n<a href='{i['Url']}'>{i['Job']}</a>")
 
-def run_cmd(bot, update, telegramBot):
+
+def run_cmd(bot, update):
     update.message.reply_text("Starting run!")
-    loop_files(telegramBot, update)
+    loop_files(bot, update)
     update.message.reply_text("Finished run!")
-        
+  
+      
 def main():
     bot = Bot(os.path.join(path, "vacancies.bot"))
-    bot.dp.add_handler(CommandHandler("run", lambda bot,update, telegrambot: run_cmd(telegrambot)))
+    bot.dp.add_handler(CommandHandler("run", lambda dummy, update: run_cmd(bot, update)))
     
     schedule.every().day.at("08:00").do(loop_files, bot)
     schedule.every().day.at("18:00").do(loop_files, bot)
