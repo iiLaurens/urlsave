@@ -4,6 +4,7 @@ import json
 import time
 import schedule
 import logging
+from telegram.ext import CommandHandler
 
 path = os.path.join(".", "examples", "vacancies")
 
@@ -42,16 +43,17 @@ def update(file, bot, driver):
         division = f' ({i["Division"]})' if i.get("Division") else ''
         bot.send(f"{i['Company'] + division}:\n<a href='{i['Url']}'>{i['Job']}</a>")
 
+def run_cmd(bot, update, telegramBot):
+    loop_files(telegramBot)
 
         
 def main():
     bot = Bot(os.path.join(path, "vacancies.bot"))
+    bot.dp.add_handler(CommandHandler("run", lambda bot,update, telegrambot: run_cmd(telegrambot)))
+    
     schedule.every().day.at("08:00").do(loop_files, bot)
     schedule.every().day.at("18:00").do(loop_files, bot)
-    
-    if schedule.idle_seconds() > 60*30:
-        loop_files(bot)
-    
+        
     while True:
         try:
             time.sleep(schedule.idle_seconds())
