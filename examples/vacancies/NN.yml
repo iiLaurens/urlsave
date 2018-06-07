@@ -1,4 +1,10 @@
 Url: https://nn-careers.com/nl/jobs/?filter-searchphrase=&filter-company-departments%5B%5D=change-it&filter-company-departments%5B%5D=data-analytics&filter-company-departments%5B%5D=finance&filter-company-departments%5B%5D=investment-asset-management&filter-city%5B%5D=rotterdam&filter-city%5B%5D=the-hague&filter-businessunit%5B%5D=nn-group&filter-businessunit%5B%5D=nn-insurance-international&filter-businessunit%5B%5D=nn-investment-partners&filter-businessunit%5B%5D=nationale-nederlanden&filter-experience-level%5B%5D=experienced&filter-experience-level%5B%5D=graduates
+Test:
+    Save:
+        Jobs: //article//h2/a
+        Divisions: //article//li[@class="company"]
+        urls: //article//h2/a/@href
+        next button: //li[@class='nextp']/a
 Multipage:
     Next: //li[@class='nextp']/a
     Max pages: 30

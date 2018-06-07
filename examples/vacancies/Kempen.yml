@@ -1,0 +1,14 @@
+Url: http://www.kempen.nl/werkenbijkempen/
+Test:
+    Save: //a[@class="vacancy_link"]
+Group:
+    By: //a[@class="vacancy_link" and ../../div[1]/@id!="cbStagiair"
+            and not(re:match(., "secretaresse","i") or
+                    re:match(., "senior","i") or 
+                    re:match(., "legal","i") or 
+                    re:match(., "health","i"))]
+    Save:
+        Job: .
+        Company: Kempen --text
+        Division: ../../div/h2
+        Url: ./@href --url

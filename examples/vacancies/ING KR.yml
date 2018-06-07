@@ -1,0 +1,11 @@
+Url: https://www.ing.jobs/Global/Careers/Job-opportunities.htm?location_level_1=KR
+Test:
+    Save:
+        Jobs: //div[@class="careers-search-result"]//a
+Group:
+    By: >
+        //div[@class="careers-search-result"]
+    Save:
+        Job: .//a
+        Company: ING (KR) --text
+        Url: .//a/@href --url
