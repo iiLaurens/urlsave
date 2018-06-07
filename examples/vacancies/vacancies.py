@@ -44,9 +44,9 @@ def update(file, bot, driver):
         bot.send(f"{i['Company'] + division}:\n<a href='{i['Url']}'>{i['Job']}</a>")
 
 def run_cmd(bot, update, telegramBot):
-    telegramBot.send("Starting run!")
+    update.message.reply_text("Starting run!")
     loop_files(telegramBot)
-    telegramBot.send("Finished run!")
+    update.message.reply_text("Finished run!")
         
 def main():
     bot = Bot(os.path.join(path, "vacancies.bot"))
