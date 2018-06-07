@@ -13,7 +13,7 @@ logging.basicConfig(filename=os.path.join(path, "errors.log"),
                     datefmt='%Y-%m-%d %H:%M:%S')
 
 
-def loop_files(bot):
+def loop_files(bot, update=None):
     files = [f for f in os.listdir(path) if f.endswith(".yml")]
     if not any(files):
         return
@@ -24,7 +24,11 @@ def loop_files(bot):
                 update(file, bot, driver)
             except:
                 logging.exception(f"An exception occured parsing file {file}:", exc_info=True)
-                bot.send(f'<i>Error parsing {file} ({Storage.make_timestamp()})</i>')
+                msg = f'<i>Error parsing {file} ({Storage.make_timestamp()})</i>'
+                if update:
+                    update.message.reply_text(msg)
+                else:
+                    bot.send(msg)
 
                 
     
@@ -45,7 +49,7 @@ def update(file, bot, driver):
 
 def run_cmd(bot, update, telegramBot):
     update.message.reply_text("Starting run!")
-    loop_files(telegramBot)
+    loop_files(telegramBot, update)
     update.message.reply_text("Finished run!")
         
 def main():
