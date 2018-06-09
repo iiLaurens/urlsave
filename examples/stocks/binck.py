@@ -1,6 +1,5 @@
 import os
 from urlsave import Parser, Browser, Storage, Bot
-import json
 import time
 import schedule
 import logging
@@ -8,18 +7,16 @@ import io
 from telegram.ext import CommandHandler
 
 path = os.path.join(".", "examples", "stocks")
-checking = False
+processing  = os.path.join(path, "processing.txt")
 
 logging.basicConfig(filename=os.path.join(path, "errors.log"))
 
 def update(bot):
-    global checking
-    
-    if checking:
+    if os.path.exists(processing):
         bot.send("Ik ben al bezig met een check! Heb geduld lul!")
         return
     
-    checking = True
+    open(processing, 'w').close()
     try:
         with io.open(os.path.join(path, "binck.yml"),'r',encoding='utf8') as f:
             job = f.read()
@@ -43,12 +40,14 @@ def update(bot):
         
         bot.send(s, parse_mode="Markdown")
     except:
-        checking = False
+        os.remove(processing)
         bot.send("Check niet gelukt!")
         raise
         
-    checking = False
+    os.remove(processing)
 
+def clean():
+    os.remove(processing)
 
 def check(resp, bot):
     resp.message.reply_text("Bezig met handmatige check...")
@@ -58,14 +57,13 @@ def check(resp, bot):
 def main():
     bot = Bot(os.path.join(path, "binck.bot"))
     bot.dp.add_handler(CommandHandler("check", lambda dummy1, resp: check(resp, bot)))
+    bot.dp.add_handler(CommandHandler("clean", lambda dummy1, dummy2: clean()))
     
     schedule.every().monday.at("17:00").do(update, bot)
     schedule.every().tuesday.at("17:00").do(update, bot)
     schedule.every().wednesday.at("17:00").do(update, bot)
     schedule.every().thursday.at("17:00").do(update, bot)
     schedule.every().friday.at("17:00").do(update, bot)
-    
-    update(bot)
     
     while True:
         try:
