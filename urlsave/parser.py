@@ -10,12 +10,19 @@ from lxml import html
 from time import sleep
 import re
 from urllib.parse import urljoin, urlparse
+import os
+from locale import atof
+
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 class Parser(object):
     def __init__(self, job, driver=None, keep_driver = False,
                  test_mode = False):
         # If we have raw string, then transform it into a dictionary
         if type(job) == str:
+            job = read_secrets(job)
             job = yaml.load(job)
             
         # Store variables
@@ -29,7 +36,6 @@ class Parser(object):
         
         if not self.job.get('Url') and not test_mode:
             raise Exception("No URL given in job config")
-        
         
     def start(self):
         job = self.job.copy()        
@@ -72,14 +78,39 @@ class Parser(object):
                 name, value = list(task.items())[0]
                 name = name.lower().replace(" ", "_")
             except:
-                raise Exception("Navigation action must be a dict.")
+                raise YAMLException("Navigation action must be a dict.")
+            
+            if name.lower() == "wait for":
+                self.wait_for_element(value)
+                
+            if name.lower() == "pause":
+                sleep(value)
             
             if name.lower() == "click":
                 try:
-                    self.driver.find_element_by_xpath(value).click()
+                    self.wait_for_element(value)
                 except:
-                    raise Exception("XPath did not lead to an element to click")
+                    raise XPathException(f"XPath did not lead to an element to click: {value}")
+                self.driver.find_element_by_xpath(value).click()
+                    
+            if name.lower() == "fill":
+                path = value["Path"]
+                value = value["Value"]
+                try:
+                    self.wait_for_element(path)
+                except:
+                    raise XPathException(f"XPath did not lead to textbox: {path}")
+                self.driver.find_element_by_xpath(path).send_keys(str(value))
+                
+            if name.lower() == "url":
+                self.url(value)
+            
+            self.update()
 
+
+    def wait_for_element(self, path):
+        WebDriverWait(self.driver, 5).until(EC.presence_of_element_located((By.XPATH, path)))
+    
     
     def multipage(self, job):
         max_pages = job.get("Max pages", 10)
@@ -168,15 +199,23 @@ class Parser(object):
         # will extract all text contents and strip leading or trailing
         # whitespace. If not an element but already text, for example
         # because the xpath selects some attribute value such as class, 
-        # then only stripping is required.
-        result = [e.text_content().strip() if type(e) == html.HtmlElement
-                  else e.strip() for e in result]
+        # then only stripping is required.      
+        if type(result) == list:
+            result = [e.text_content().strip() if type(e) == html.HtmlElement
+                      else e.strip() for e in result]
+        else:
+            # This might happen when an text or string is returned, for example
+            # after a re:replace function
+            result = [str(result).strip()]
         
         if len(result) == 0:
             return None
         
         if '--url' in options:
             result = make_absolute_url(self.driver.current_url, result)
+            
+        if '--number' in options:
+            result = [atof(x) for x in result]
         
         # If the single option is given, then collapse the list
         if not '--keep-list' in options:
@@ -336,6 +375,24 @@ def make_absolute_url(current, hrefs):
         if not bool(urlparse(href).netloc):
             new[idx] = urljoin(current, href)
     return new
+
+def read_secrets(s):
+    values = []
+    for match in re.finditer("\{\{(.*):(.*)\}\}", s):
+        try:
+            with open(os.path.normpath(match[1])) as f:
+                value = yaml.load(f.read())[match[2]]
+            values.append(value)
+        except:
+            raise YAMLException(f"Could not extract secret with key '{match[2]}' from file: {match[1]}")
+                
+    for v in values:
+        s = re.sub("\{\{.*:.*\}\}", str(v), s, count=1)
+        
+    return s
+
+class YAMLException(Exception):
+    pass
 
 class XPathException(Exception):
     pass

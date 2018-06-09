@@ -1,0 +1,19 @@
+Url: https://web.binck.nl/logon/
+Navigate:
+    - Fill: 
+        Path: //input[@id="UserName"]
+        Value: {{./examples/stocks/login.secret:user}}
+    - Fill: 
+        Path: //input[@id="Password"]
+        Value: {{./examples/stocks/login.secret:pwd}}
+    - Click: //button[. = "Inloggen"]
+    - Click: //a[contains(., "zonder")]
+    - Click: //span[contains(., "Analyse") and @class]
+    - Click: //nav[@class="tabs-menu"]//span[contains(.,"Schaduw")]
+    - Pause: 3
+Group:
+    By: //table/tbody[2]//tr
+    Save:
+        Fund: re:replace(./td[2], "-.*-", "g", "")
+        Value: re:replace(re:replace(./td[6], "€| |\.", "g", ""), ",", "g", ".") --number
+        History: re:replace(re:replace(./td[8], "€| |\.", "g", ""), ",", "g", ".") --number

@@ -68,12 +68,12 @@ class Bot(object):
         return self.updater.bot.send_message(*args, **kwargs)
     
     
-    def send(self, msg):
+    def send(self, msg, parse_mode = "HTML"):
         for chat_id in self.chat_ids:
             isgroup = True if chat_id < 0 else False
             self.send_queue(chat_id=chat_id,
                             text=msg,
-                            parse_mode='HTML',
+                            parse_mode=parse_mode,
                             isgroup = isgroup)
                                           
     def __del__(self):

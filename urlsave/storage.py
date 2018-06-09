@@ -85,6 +85,15 @@ class Storage(object):
         subset_qry = f"AND subset='{subset}'" if subset else ""
         results = c.execute(f"SELECT json FROM documents WHERE new = 1 {subset_qry}").fetchall()
         return [x[0] for x in results]
+    
+    
+    def get_active(self, subset = None):
+        con = self.con
+        c = con.cursor()
+        
+        subset_qry = f"AND subset='{subset}'" if subset else ""
+        results = c.execute(f"SELECT json FROM documents WHERE active = 1 {subset_qry}").fetchall()
+        return [x[0] for x in results]
         
     def query(self, qry):
         con = self.con
