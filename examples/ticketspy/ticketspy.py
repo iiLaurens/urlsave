@@ -21,7 +21,7 @@ def update(bot):
         db.update_db(p.storage)
         new = [json.loads(x) for x in db.get_new()]
     
-    for i in new:
+    for i in reversed(new):
         bot.send(f"<a href='{i['url']}'>{i['text']}</a>")
 
 
