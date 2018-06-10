@@ -26,11 +26,12 @@ def update(bot):
         history = 0.0
         value = 0.0
         for i in p.storage:
-            s += f"*{i['Fund']}:*\n`   €{i['Value']:9.2f}  ({i['Value'] - i['History']:7.2f})`\n"
+            s += f"*{i['Fund']}:*\n`€{i['Value']:9.2f}  ({i['Value'] - i['History']:7.2f})`\n"
             history += i['History']
             value += i['Value']
             
-        s += f"\n*TOTAL:*\n`   €{value:9.2f} ({value - history:8.2f})`"
+        s += f"\n*TOTAL:*\n`€{value:9.2f} ({value - history:8.2f})`"
+        s += f"\n  p.p.:\n`€{value/5:9.2f} ({(value - history)/5:8.2f})`"
         
         bot.send(s, parse_mode="Markdown")
     except:

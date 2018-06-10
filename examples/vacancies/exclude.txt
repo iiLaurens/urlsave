@@ -1,0 +1,1 @@
+string: re:match(., "control|test|account(ing|ant)|scrum|sas|database|senior|java|agile|security|audit", "i")
