@@ -52,7 +52,7 @@ def get_cash():
 
 
 def cash(resp, bot, c):
-    if resp.message.from_user['first_name'] != "Laurens":
+    if resp.message.from_user['first_name'] != "Rens":
         return
     
     try:
