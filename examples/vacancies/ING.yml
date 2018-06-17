@@ -12,17 +12,7 @@ Group:
         [not(re:match(./span[3], "internship", "i"))]
         [re:match(./span[4], "holland", "i") or
          re:match(./span[4], "utrecht", "i")]
-        [not(re:match(./span[1], "control", "i") or
-             re:match(./span[1], "test", "i") or
-             re:match(./span[1], "account(ing|ant)", "i") or
-             re:match(./span[1], "scrum", "i") or
-             re:match(./span[1], "sas", "i") or
-             re:match(./span[1], "database", "i") or
-             re:match(./span[1], "senior", "i") or
-             re:match(./span[1], "java", "i") or
-             re:match(./span[1], "agile", "i") or
-             re:match(./span[1], "intern", "i") or
-             re:match(./span[1], "security", "i"))]
+        [./span[1][not({{./examples/vacancies/exclude.txt:string}})]]
     Save:
         Job: ./span[1]
         Company: ING (NL) --text

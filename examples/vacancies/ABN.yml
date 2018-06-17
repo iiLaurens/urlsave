@@ -5,17 +5,8 @@ Test:
         urls: //article/a/@href
 Group:
     By: >
-       //article[.//span[@itemprop="title" and not(re:match(., "control", "i") or
-                                                   re:match(., "test", "i") or
-                                                   re:match(., "account(ing|ant)", "i") or
-                                                   re:match(., "scrum", "i") or
-                                                   re:match(., "sas", "i") or
-                                                   re:match(., "database", "i") or
-                                                   re:match(., "senior", "i") or
-                                                   re:match(., "java", "i") or
-                                                   re:match(., "agile", "i") or
-                                                   re:match(., "security", "i"))]]
+       //article[.//span[@itemprop="title" and not({{./examples/vacancies/exclude.txt:string}})]]
     Save:
         Job: .//span[@itemprop="title"]
         Company: ABN Amro --text
-        Url: ./a/@href --url
+        Url: re:replace(./a/@href, "\?.*", "g", "") --url

@@ -10,16 +10,7 @@ Multipage:
     Max pages: 30
     Group:
         By: >
-            //article[not(re:match(.//h2/a, "control", "i") or
-                          re:match(.//h2/a, "test", "i") or
-                          re:match(.//h2/a, "account(ing|ant)", "i") or
-                          re:match(.//h2/a, "scrum", "i") or
-                          re:match(.//h2/a, "sas", "i") or
-                          re:match(.//h2/a, "database", "i") or
-                          re:match(.//h2/a, "senior", "i") or
-                          re:match(.//h2/a, "java", "i") or
-                          re:match(.//h2/a, "agile", "i") or
-                          re:match(.//h2/a, "security", "i"))]
+            //article[.//h2/a[not({{./examples/vacancies/exclude.txt:string}})]]
         Save:
             Job: .//h2/a
             Company: NN --text
