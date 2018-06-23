@@ -1,3 +1,0 @@
-Group:
-    By: //div[@class="pokemon-info" and contains(., "Normal") and count(.//div)=1]
-    Save: ./h5

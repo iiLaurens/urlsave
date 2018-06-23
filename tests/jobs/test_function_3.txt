@@ -1,4 +1,0 @@
-Test:
-    Save:
-        Pokemon: //div[@class="pokemon-info"]/h5
-        Dummy: //fake/tag

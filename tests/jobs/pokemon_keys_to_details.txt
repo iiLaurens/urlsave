@@ -1,6 +1,0 @@
-Group:
-    By: //div[@class="pokemon-info"]
-    Keys: ./h5
-    Save:
-        id: ./p[@class="id"]
-        abilities: .//div[@class="abilities"]/span

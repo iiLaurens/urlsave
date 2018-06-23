@@ -1,3 +1,0 @@
-Save: >
-  //div[@class="pokemon-info"]/h5[re:match(., 'y', 'i') or
-                                  re:match(., 'x', 'i')]
