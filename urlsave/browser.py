@@ -6,7 +6,7 @@ This is a test script file.
 """
 
 import os
-import pychrome
+import urlsave.pychrome as pychrome
 
 from selenium.webdriver.chrome.webdriver import WebDriver
 from selenium.webdriver.chrome.options import Options

@@ -10,7 +10,10 @@ setup(name='urlsave',
       packages=['urlsave'],
       install_requires=[
           'lxml',
-		  'selenium',
-		  'poyo'
+		'selenium',
+		'pyyaml',
+           'websocket-client',
+           'requests'
+		
       ],
       zip_safe=False)
