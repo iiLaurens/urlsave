@@ -14,25 +14,23 @@ from time import sleep
 def get_urlsave(txt = ""):
     yield f'''
     <form action="/" method="post">
-        <textarea name="cmd" rows="10" cols="80" style="white-space: pre;">{txt}</textarea>
+    <textarea name="cmd" rows="10" cols="80" style="white-space: pre;">{txt}</textarea>
     
     
         <fieldset>
-            <legend>Choose some monster features</legend>
+        <legend>Choose some monster features</legend>
         
             <div>
-                <input type="checkbox" id="headless" name="headless"
-                       value="headless"/>
-                <label for="headless">Headless Chrome</label>
-                
+            <input type="checkbox" id="headless" name="headless" value="headless"/>
+            <label for="headless">Headless Chrome</label>
+            
                 <br />
                 
-                <input type="checkbox" id="keep_driver" name="keep_driver"
-                       value="keep_driver" checked />
+                <input type="checkbox" id="keep_driver" name="keep_driver" value="keep_driver" checked />
                 <label for="keep_driver">Keep driver alive (if not headless)</label>
-            </div>    
+            </div>
         </fieldset>
-    
+        
         <input type="submit">
     </form>
     '''
