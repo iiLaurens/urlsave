@@ -18,8 +18,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 class Parser(object):
-    def __init__(self, job, driver=None, keep_driver = False,
-                 test_mode = False):
+    def __init__(self, job, driver=None, test_mode = False):
         # If we have raw string, then transform it into a dictionary
         if type(job) == str:
             job = read_secrets(job)
@@ -28,7 +27,6 @@ class Parser(object):
         # Store variables
         self.job = job
         self.driver = driver
-        self.keep_driver = keep_driver
         self.storage = None
         
         if test_mode:
