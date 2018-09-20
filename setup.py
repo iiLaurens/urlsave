@@ -9,11 +9,11 @@ setup(name='urlsave',
       license='MIT',
       packages=['urlsave'],
       install_requires=[
-          'lxml',
+        'lxml',
 		'selenium',
 		'pyyaml',
-           'websocket-client',
-           'requests'
-		
+        'websocket-client',
+        'requests',
+        'python-telegram-bot'		
       ],
       zip_safe=False)
