@@ -214,6 +214,12 @@ class Parser(object):
             
         if '--number' in options:
             result = [atof(x) for x in result]
+
+        if '--unique' in options:
+            try:
+                result = list(dict.fromkeys(result))
+            except:
+                raise Exception("Could not remove duplicates! Ensure that the output is a list of strings.")
         
         # If the single option is given, then collapse the list
         if not '--keep-list' in options:

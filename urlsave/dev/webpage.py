@@ -69,7 +69,7 @@ def do_urlsave():
         if headless or not keep_driver:
             driver.__exit__()
         
-        output = json.dumps(p.storage, indent=2)
+        output = json.dumps(p.storage, indent=2, ensure_ascii=False)
         
         yield f"""
         <fieldset>

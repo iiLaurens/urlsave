@@ -2,7 +2,6 @@
 __pycache__/
 *.py[cod]
 *$py.class
-bottle.*
 
 # Telegram stored secrets
 *.bot
@@ -113,4 +112,3 @@ venv.bak/
 
 # mypy
 .mypy_cache/
-urlsave/dev/__pycache__/bottle.cpython-36.pyc
