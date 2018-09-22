@@ -8,6 +8,12 @@ matrix:
 addons:
   chrome: stable
 
+before_install:
+  - wget https://chromedriver.storage.googleapis.com/2.42/chromedriver_linux64.zip
+  - unzip chromedriver_linux64.zip
+  - sudo chmod +x chromedriver
+  
+
 install:
   - pip install -r requirements_dev.txt
   - python setup.py install
