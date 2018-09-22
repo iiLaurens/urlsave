@@ -8,9 +8,6 @@ matrix:
 addons:
   chrome: stable
 
-before_install: 
-  - pip install pyyaml --install-option="--without-libyaml"
-
 install:
   - python setup.py install
 
