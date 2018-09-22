@@ -1,4 +1,4 @@
 Urlsave
 =========
 
-[![Travis status](https://travis-ci.com/iilaurens/urlsave.svg)](https://travis-ci.com/iilaurens/urlsave)
+[![Build Status](https://travis-ci.org/iiLaurens/urlsave.svg?branch=master)](https://travis-ci.org/iiLaurens/urlsave)
