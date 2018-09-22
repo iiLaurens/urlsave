@@ -1,0 +1,4 @@
+Url: https://iilaurens.github.io/urlsave/pages/pokemons.html
+Save:
+  Pokemon: (//td[@title='name'])[25]
+  Owner: Ash --text

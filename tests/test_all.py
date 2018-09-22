@@ -27,6 +27,12 @@ def driver():
     ("003_save_list_xpath", "003_output"),
     ("004_save_dict_xpath", "004_output"),
     ("005_save_nested", "005_output"),
+    ("006_save_argument_text", "006_output"),
+    ("007_save_argument_keep-list", "007_output"),
+    ("008_save_argument_unique", "008_output"),
+    ("009_save_argument_number", "009_output"),
+    ("010_save_argument_url", "010_output"),
+    ("011_save_dict_pair", "011_output"),
 ])
 def test_parser(driver, input, output):
     input =  os.path.join(os.getcwd(), "tests", "jobs", input + ".yml")
