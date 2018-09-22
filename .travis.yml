@@ -8,10 +8,8 @@ matrix:
 addons:
   chrome: stable
 
-before_install:
-  - pip install pyyaml>=3.13
-
 install:
+  - pip install -r requirements_dev.txt
   - python setup.py install
 
 script: tox -e ${TOXENV}

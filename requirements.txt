@@ -1,4 +1,0 @@
-lxml==4.2.1
-selenium==3.11.0
-pyyaml==3.12
-python-telegram-bot==10.1.0
