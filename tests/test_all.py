@@ -24,6 +24,9 @@ def driver():
 @pytest.mark.parametrize("input, output", [
     ("001_save_single_xpath",        "001_output"),
     ("002_save_single_xpath_scalar", "002_output"),
+    ("003_save_list_xpath", "003_output"),
+    ("004_save_dict_xpath", "004_output"),
+    ("005_save_nested", "005_output"),
 ])
 def test_parser(driver, input, output):
     input =  os.path.join(os.getcwd(), "tests", "jobs", input + ".yml")

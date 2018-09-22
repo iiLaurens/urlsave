@@ -1,0 +1,7 @@
+Url: https://iilaurens.github.io/urlsave/pages/pokemons.html
+Save:
+  - //td[@title='name']
+  - //td[@title='French']
+  - //td[@title='German']
+  - //td[@title='Korean']
+  - //td[@title='Japan']
