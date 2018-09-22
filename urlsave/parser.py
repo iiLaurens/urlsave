@@ -29,10 +29,7 @@ class Parser(object):
         self.driver = driver
         self.storage = None
         
-        if test_mode:
-            self.update()
-        
-        if not self.job.get('Url') and not test_mode:
+        if not self.job.get('Url'):
             raise Exception("No URL given in job config")
         
     def start(self):

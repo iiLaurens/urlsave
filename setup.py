@@ -10,10 +10,10 @@ setup(name='urlsave',
       packages=['urlsave'],
       install_requires=[
         'lxml',
-		'selenium',
-		'pyyaml',
+        'selenium',
+        'pyyaml',
         'websocket-client',
         'requests',
-        'python-telegram-bot'		
+        'python-telegram-bot'
       ],
       zip_safe=False)
