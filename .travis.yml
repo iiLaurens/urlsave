@@ -8,6 +8,9 @@ matrix:
 addons:
   chrome: stable
 
+before_install: 
+  - pip install --upgrade pip
+
 install:
   - python setup.py install
 
