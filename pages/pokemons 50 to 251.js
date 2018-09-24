@@ -1655,6 +1655,8 @@ x1 = `<tr class='row'><td width="99%" height="362" valign="top" bordercolor="#11
 </p></div>
 </div></font></td></tr>`;
 
+
+
 x2 = `<tr class='row'><td width="99%" height="362" valign="top" bordercolor="#111111">
 <font face="Verdana" size="1" color="#FFFFFF"><div align="center"><div align="center"><table class="dextable"><tbody><tr><td bgcolor="#9b445b" height="25"></td></tr></tbody></table><p></p><table class="dextable">
 		<tr>
@@ -16246,9 +16248,9 @@ x2 = `<tr class='row'><td width="99%" height="362" valign="top" bordercolor="#11
 
 </table><p>
 </p></div>
-</div></font></td></tr>`;
+</div></font></td></tr>
 
-x3 = `<tr class='row'><td width="99%" height="362" valign="top" bordercolor="#111111">
+<tr class='row'><td width="99%" height="362" valign="top" bordercolor="#111111">
 <font face="Verdana" size="1" color="#FFFFFF"><div align="center"><div align="center"><table class="dextable"><tbody><tr><td bgcolor="#9b445b" height="25"></td></tr></tbody></table><p></p><table class="dextable">
 		<tr>
 			<td class="fooevo" width="120">Picture</td>
@@ -20171,13 +20173,10 @@ x3 = `<tr class='row'><td width="99%" height="362" valign="top" bordercolor="#11
 
 </table><p>
 </p></div>
-</div></font></td></tr>
+</div></font></td></tr>`;
 
 
-
-
-
-<tr class='row'><td width="99%" height="362" valign="top" bordercolor="#111111">
+x3 = `<tr class='row'><td width="99%" height="362" valign="top" bordercolor="#111111">
 <font face="Verdana" size="1" color="#FFFFFF"><div align="center"><div align="center"><table class="dextable"><tbody><tr><td bgcolor="#9b445b" height="25"></td></tr></tbody></table><p></p><table class="dextable">
 		<tr>
 			<td class="fooevo" width="120">Picture</td>
@@ -28358,13 +28357,7 @@ x3 = `<tr class='row'><td width="99%" height="362" valign="top" bordercolor="#11
 </p></div>
 </div></font></td></tr>`;
 
-x4 = `
-
-
-
-
-
-<tr class='row'><td width="99%" height="362" valign="top" bordercolor="#111111">
+x4 = `<tr class='row'><td width="99%" height="362" valign="top" bordercolor="#111111">
 <font face="Verdana" size="1" color="#FFFFFF"><div align="center"><div align="center"><table class="dextable"><tbody><tr><td bgcolor="#9b445b" height="25"></td></tr></tbody></table><p></p><table class="dextable">
 		<tr>
 			<td class="fooevo" width="120">Picture</td>
