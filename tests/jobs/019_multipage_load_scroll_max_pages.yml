@@ -1,0 +1,8 @@
+Url: https://iilaurens.github.io/urlsave/pages/pokemons scroll load.html
+Multipage:
+    Scrolling: True
+    Max pages: 3
+    Group: 
+      By: //tr[@class="row"]
+      Keys: .//td[@title="name"]
+      Save: .//td[@title="type"]/span --keep-list

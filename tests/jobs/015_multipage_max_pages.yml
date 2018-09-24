@@ -1,0 +1,8 @@
+Url: https://iilaurens.github.io/urlsave/pages/001.html
+Multipage:
+    Next: //a[contains(.,"next")]
+    Max pages: 9
+    Group: 
+      By: /html
+      Keys: .//td[@title="name"]
+      Save: .//td[@title="type"]/span --keep-list

@@ -1,1 +1,13 @@
-{"HP": "45", "Attack": "49", "Defense": "49", "Sp. Attack": "65", "Sp. Defense": "65", "Speed": "45"}
+{
+    "ThunderShock": "Electric",
+    "Growl": "Normal",
+    "Tail Whip": "Normal",
+    "Thunder Wave": "Electric",
+    "Quick Attack": "Normal",
+    "Double Team": "Normal",
+    "Slam": "Normal",
+    "Thunderbolt": "Electric",
+    "Agility": "Psychic",
+    "Thunder": "Electric",
+    "Light Screen": "Psychic"
+  }

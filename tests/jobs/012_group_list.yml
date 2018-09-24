@@ -1,0 +1,7 @@
+Url: https://iilaurens.github.io/urlsave/pages/pokemons.html
+Group:
+    By: //tr[@class="row"]
+    Save:
+        Name: .//td[@title="name"]
+        Number: .//td[@title="number"]
+        Type: .//td[@title="type"]/span --keep-list

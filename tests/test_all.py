@@ -33,8 +33,18 @@ def driver():
     ("009_save_argument_number", "009_output"),
     ("010_save_argument_url", "010_output"),
     ("011_save_dict_pair", "011_output"),
+    ("012_group_list", "012_output"),
+    ("013_group_dict", "013_output"),
+    ("014_multipage_save", "014_output"),
+    ("015_multipage_max_pages", "015_output"),
+    ("016_multipage_load_button", "016_output"),
+    ("017_multipage_load_button_max_pages", "017_output"),
+    ("018_multipage_load_scroll", "018_output"),
+    ("019_multipage_load_scroll_max_pages", "019_output"),
 ])
 def test_parser(driver, input, output):
+    driver.get("about:blank") # blank out page
+
     input =  os.path.join(os.getcwd(), "tests", "jobs", input + ".yml")
     output = os.path.join(os.getcwd(), "tests", "results", output + ".json")
     

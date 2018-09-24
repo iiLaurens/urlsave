@@ -1,0 +1,8 @@
+Url: https://iilaurens.github.io/urlsave/pages/pokemons button load.html
+Multipage:
+    Next: //a[contains(., "Load")]
+    Cumulative: True
+    Group: 
+      By: //tr[@class="row"]
+      Keys: .//td[@title="name"]
+      Save: .//td[@title="type"]/span --keep-list

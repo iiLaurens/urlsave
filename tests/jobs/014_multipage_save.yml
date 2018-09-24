@@ -1,0 +1,4 @@
+Url: https://iilaurens.github.io/urlsave/pages/249.html
+Multipage:
+    Next: //a[contains(.,"next")]
+    Save: //td[@title="name"]

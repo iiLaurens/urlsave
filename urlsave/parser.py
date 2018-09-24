@@ -130,9 +130,13 @@ class Parser(object):
             # If each page contains new items only, then we have to accumulate
             # the results manually.
             if not cumulative:
+                self.update()
                 result = self.group(job["Group"]) if group else self.save(job["Save"])
                 results.append(result)
             
+            if page + 1 == max_pages:
+                break
+
             if not scroll_load:
                 # Try to find the next button in source, or stop if not found
                 try:
@@ -156,10 +160,6 @@ class Parser(object):
                 if new_height == last_height:
                     break
                 last_height = new_height
-            
-            # Set next page
-            if not cumulative:
-                self.update()
         
         if not cumulative:
             result = merge_results(results)

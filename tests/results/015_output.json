@@ -1,0 +1,33 @@
+{
+    "Bulbasaur": [
+      "Grass",
+      "Poison"
+    ],
+    "Ivysaur": [
+      "Grass",
+      "Poison"
+    ],
+    "Venusaur": [
+      "Grass",
+      "Poison"
+    ],
+    "Charmander": [
+      "Fire"
+    ],
+    "Charmeleon": [
+      "Fire"
+    ],
+    "Charizard": [
+      "Fire",
+      "Flying"
+    ],
+    "Squirtle": [
+      "Water"
+    ],
+    "Wartortle": [
+      "Water"
+    ],
+    "Blastoise": [
+      "Water"
+    ]
+  }
