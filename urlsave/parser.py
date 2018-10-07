@@ -76,25 +76,22 @@ class Parser(object):
                 raise YAMLException("Navigation action must be a dict.")
             
             if name.lower() == "wait for":
-                self.wait_for_element(value)
+                try:
+                    self.wait_for_element(value)
+                except:
+                    raise XPathException(f"Navigation problem: could not find XPath with value: {value}")
                 
             if name.lower() == "pause":
                 sleep(value)
             
             if name.lower() == "click":
-                try:
-                    self.wait_for_element(value)
-                except:
-                    raise XPathException(f"XPath did not lead to an element to click: {value}")
+                self.wait_for_element(value)
                 self.driver.find_element_by_xpath(value).click()
                     
             if name.lower() == "fill":
                 path = value["Path"]
                 value = value["Value"]
-                try:
-                    self.wait_for_element(path)
-                except:
-                    raise XPathException(f"XPath did not lead to textbox: {path}")
+                self.wait_for_element(path)
                 self.driver.find_element_by_xpath(path).send_keys(str(value))
                 
             if name.lower() == "url":
