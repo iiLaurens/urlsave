@@ -11,19 +11,21 @@ function addNode() {
    i = i + 1;
 }
 
-function repeat(x, t = 200){
+function repeat(x, t = 200, url = "025.html"){
    if (x > 0) {
       addNode();
       setTimeout(function(){ repeat(x - 1, t) }, t);
    } else {
-      document.getElementById("link").setAttribute("href", "025.html");
+      document.getElementById("link").setAttribute("href", url);
       document.getElementById("link").innerHTML = "Next";
    }
 }
 
 function validateForm() {
     var x = document.getElementById("in").value;
-    if (x != "") {
+    if (x.toLowerCase() == "bulbasaur") {
+       repeat(0, 0, "001.html");
+    } else if (x != "") {
        repeat(250, 10);
     }
 }
