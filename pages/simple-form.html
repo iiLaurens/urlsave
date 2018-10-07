@@ -1,16 +1,42 @@
 <!DOCTYPE html>
 <html>
+<head>
+<script>
+var i = 1;
+function addNode() {
+   var node = document.createElement("li");
+   var textnode = document.createTextNode(i.toString());
+   node.appendChild(textnode);
+   document.getElementById("list").appendChild(node);
+   i = i + 1;
+}
+
+function repeat(x, t = 200){
+   if (x > 0) {
+      addNode();
+      setTimeout(function(){ repeat(x - 1, t) }, t);
+   } else {
+      document.getElementById("link").setAttribute("href", "slow-page.html");
+      document.getElementById("link").innerHTML = "Next";
+   }
+}
+
+function validateForm() {
+    var x = document.getElementById("in").value;
+    if (x != "") {
+       repeat(250, 10);
+    }
+}
+</script>
+</head>
 <body>
 
-<form action="simple-form.html">
-  First name:<br>
-  <input type="text" name="firstname" value="Mickey">
-  <br>
-  Last name:<br>
-  <input type="text" name="lastname" value="Mouse">
-  <br><br>
-  <input type="submit" value="Submit">
-</form> 
+Input: <input type="text" id="in">
+<button onclick="validateForm()">click</button>
+
+<ul id="list"></ul>
+
+<a href="#" id="link"></a>
 
 </body>
 </html>
